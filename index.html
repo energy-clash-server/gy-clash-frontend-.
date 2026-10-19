@@ -235,7 +235,7 @@
 
       <div class="math-breakdown" id="clash-math-details"></div>
 
-      <button class="btn" style="width: 100%; padding: 10px; font-size: 1.05rem;" onclick="Game.closeClashResultAndNext()">متابعة القتال ⚔️</button>
+      <button class="btn" style="width: 100%; padding: 10px; font-size: 1.05rem;" onclick="Game.closeClashResultAndNext()">متابعة القتال (الدور التالي) ⚔️</button>
     </div>
   </div>
 
@@ -266,7 +266,7 @@
         <p>• <b>البداية:</b> تبدأ بـ ١٥ طاقة، و٥ بطاقات، وتتجدد يدك ببداية دورك حتى ٦ بطاقات.</p>
         <p>• <b>الهجوم:</b> مقاتل + أكشن اختياري، أو أكشن عام لحاله.</p>
         <p>• <b>الدفاع والتوقع:</b> المدافع لا يرى ورقة المهاجم إطلاقاً؛ تظهر كرت مقلوب ❓ وعليه توقع قوتها واختيار دفاعه.</p>
-        <p>• <b>تقرير الهجوم:</b> بعد صد الضربة، ينتقل الجميع لشاشة المعركة لمعرفة ما حدث بالتفصيل وحساب الضرر ثم يبدأ دور اللاعب التالي.</p>
+        <p>• <b>تقرير الهجوم:</b> بعد الهجوم ومهما كانت نتيجته، ينتقل الدور تلقائياً للاعب التالي وتتجدد يده لـ ٦ بطاقات.</p>
         <p>• <b>منع التجمع:</b> أقصى حد هجومان على نفس اللاعب بالجولة الواحدة.</p>
       </div>
       <button class="btn btn-sec" onclick="Game.closeModals()">فهمت ذلك</button>
@@ -329,10 +329,12 @@
 
     function createDeck() {
       let d = [], u = 1;
+      // ٤٠ شخصية
       CHARACTERS.forEach(c => {
         for (let i = 0; i < 2; i++) d.push({ ...c, uid: 'c_' + (u++), isChar: true });
       });
-      const counts = { a10: 1, a5: 3, a9: 2, a1: 3, a6: 2, a8: 2, a12: 3, a2: 6, a3: 6, a4: 5, a7: 5, a11: 2 };
+      // ٥٢ بطاقة أكشن (+1 لكل نوع)
+      const counts = { a10: 2, a5: 4, a9: 3, a1: 4, a6: 3, a8: 3, a12: 4, a2: 7, a3: 7, a4: 6, a7: 6, a11: 3 };
       ACTIONS.forEach(a => {
         for (let i = 0; i < (counts[a.id] || 0); i++) d.push({ ...a, uid: 'a_' + (u++), isChar: false });
       });
@@ -537,7 +539,7 @@
       hostStartOnline() {
         this.state.started = true;
         this.state.deck = createDeck();
-        this.state.turnIdx = 0; // يبدأ المضيف فوراً
+        this.state.turnIdx = 0;
 
         this.state.players.forEach(p => {
           this.state.hands[p.id] = this.state.deck.splice(0, 5);
@@ -594,7 +596,6 @@
 
       sanitizePendingAttack(forPlayerId) {
         if (!this.pendingAttack) return null;
-        // إخفاء ورقة المهاجم تماماً عن المدافع لضمان التوقع والسرية
         return {
           attackerId: this.pendingAttack.attackerId,
           attackerName: this.pendingAttack.attackerName,
@@ -623,7 +624,7 @@
           banner.textContent = `⚔️ هجوم جارٍ على ${targetP.name} (المدافع يخمن ويختار)...`;
           banner.style.color = '#ff6b6b';
         } else if (isMyTurn) {
-          banner.textContent = `★ دورك الآن (${curPlayer.name}) - اختر مقاتلاً (وأكشناً اختياري) أو أكشن عام ★`;
+          banner.textContent = `★ دورك الآن (${curPlayer.name}) - اختر مقاتلاً لمهاجمة خصم أو العب أكشناً عاماً ★`;
           banner.style.color = 'var(--gold-light)';
         } else {
           banner.textContent = `انتظر دورك (الدور الحالي لـ: ${curPlayer ? curPlayer.name : ''})`;
@@ -720,11 +721,11 @@
         const box = document.getElementById('action-buttons-box');
         box.innerHTML = '';
 
-        // حالة ١: المدافع يرد على الهجوم السري
+        // ١. المدافع يرد على الهجوم السري
         if (this.pendingAttack) {
           const isDefender = (this.mode === 'local') ? true : (this.pendingAttack.targetId === this.myId);
           if (isDefender) {
-            hint.textContent = `⚠️ ${this.pendingAttack.attackerName} يهاجمك ببطاقة سرية ❓! اختر مقاتلاً (وأكشن دفاعي إن وجد) لتصد، أو تلقى الضرر:`;
+            hint.textContent = `⚠️ ${this.pendingAttack.attackerName} يهاجمك بكرت سري ❓! اختر مقاتلاً (وأكشن دفاعي إن وجد) لتصد، أو تلقى الضرر:`;
             
             const btnDef = document.createElement('button');
             btnDef.className = 'btn';
@@ -746,7 +747,7 @@
           return;
         }
 
-        // حالة ٢: دور المهاجم
+        // ٢. دور المهاجم
         if (!isMyTurn) {
           hint.textContent = 'ليس دورك الآن، انتظر حتى ينتهي الخصم من حركته...';
           return;
@@ -755,9 +756,8 @@
         const selChar = hand.find(c => c.uid === this.selCharUid);
         const selAct = hand.find(c => c.uid === this.selActUid);
 
-        // هجوم بمقاتل (وأكشن مساند اختياري)
         if (selChar) {
-          hint.textContent = `مقاتل هجومي: «${selChar.name}» ${selAct ? `+ أكشن: «${selAct.name}»` : ''}. حدد هدفاً من الخصوم:`;
+          hint.textContent = `مقاتل: «${selChar.name}» ${selAct ? `+ أكشن: «${selAct.name}»` : ''}. حدد هدفاً من الخصوم:`;
           if (this.selTargetId) {
             const target = this.state.players.find(p => p.id === this.selTargetId);
             const btn = document.createElement('button');
@@ -766,10 +766,8 @@
             btn.onclick = () => this.startAttack(selChar.uid, selAct ? selAct.uid : null, target.id);
             box.appendChild(btn);
           }
-        } 
-        // لعب بطاقة أكشن بمفردها (عامة)
-        else if (selAct && selAct.role === 'gen') {
-          hint.textContent = `بطاقة أكشن: «${selAct.name}» - ${selAct.desc}`;
+        } else if (selAct && selAct.role === 'gen') {
+          hint.textContent = `أكشن عام: «${selAct.name}» - ${selAct.desc}`;
           if (['steal', 'skip', 'swap'].includes(selAct.type)) {
             if (this.selTargetId) {
               const target = this.state.players.find(p => p.id === this.selTargetId);
@@ -816,7 +814,6 @@
         if (this.mode === 'local') {
           this.pendingAttack = attackPayload;
           this.selCharUid = null; this.selActUid = null; this.selTargetId = null;
-          // نقل الشاشة فوراً للمدافع ليختار دفاعه سراً دون أن يرى كرت المهاجم!
           document.getElementById('pass-player-name').textContent = `دفاع: ${target.name}`;
           document.getElementById('pass-player-msg').textContent = `أنت تتعرض لهجوم سري من ${curPlayer.name}! استلم الجهاز وتوقع قوة الضربة لتصدها.`;
           document.getElementById('modal-pass').classList.add('active');
@@ -859,7 +856,7 @@
         }
       },
 
-      // احتساب نتيجة المعركة وتوليد تقرير ما جرى
+      // احتساب نتيجة المعركة وتمرير الدور حتمياً
       resolveClash(defense) {
         const atk = this.pendingAttack;
         const def = defense;
@@ -867,7 +864,7 @@
         const attacker = this.state.players.find(p => p.id === atk.attackerId);
         const defender = this.state.players.find(p => p.id === atk.targetId);
 
-        // سحب واستهلاك بطاقات المهاجم
+        // استهلاك كروت المهاجم
         const atkHand = this.state.hands[attacker.id];
         const atkChar = atkHand.splice(atkHand.findIndex(c => c.uid === atk.charUid), 1)[0];
         this.state.disc.push(atkChar);
@@ -881,7 +878,7 @@
           }
         }
 
-        // سحب واستهلاك بطاقات المدافع
+        // استهلاك كروت المدافع
         const defHand = this.state.hands[defender.id];
         let defChar = null;
         if (def.charUid) {
@@ -901,7 +898,6 @@
           }
         }
 
-        // التحقق من رفض الأكشن
         let atkActActive = !!atkAct;
         let defActActive = !!defAct;
         let counterLog = '';
@@ -913,28 +909,26 @@
           }
         }
 
-        // حساب الهجوم وتعديلاته
         let baseAtk = atkChar.atk;
         let bonusAtk = 0;
         let pierce = 0;
 
         if (atkChar.id === 'c7' && attacker.energy <= 5) bonusAtk += 1;
         if (atkChar.id === 'c10' && defender.energy > attacker.energy) bonusAtk += 2;
-        if (atkChar.id === 'c3') pierce += 2; // اختراق الدفاع
+        if (atkChar.id === 'c3') pierce += 2;
 
         if (atkActActive) {
-          if (atkAct.id === 'a3') bonusAtk += 2; // تعزيز الهجوم
-          if (atkAct.id === 'a4') pierce += 2; // كسر الدفاع
+          if (atkAct.id === 'a3') bonusAtk += 2;
+          if (atkAct.id === 'a4') pierce += 2;
         }
 
         let totalAtk = baseAtk + bonusAtk;
 
-        // حساب الدفاع وتعديلاته
         let baseDef = defChar ? defChar.def : 0;
         let bonusDef = 0;
 
         if (defChar) {
-          if (defChar.id === 'c1') totalAtk = Math.max(0, totalAtk - 2); // الفارس الحديدي يخفض هجوم الخصم
+          if (defChar.id === 'c1') totalAtk = Math.max(0, totalAtk - 2);
           if (defChar.id === 'c5' && defender.energy <= 7) bonusDef += 1;
           if (defChar.id === 'c8') bonusDef += 2;
         }
@@ -942,17 +936,15 @@
         let effectiveDef = Math.max(0, (baseDef + bonusDef) - pierce);
 
         let dmgReduction = 0;
-        if (defActActive && defAct.id === 'a2') dmgReduction += 2; // الدرع الواقي
+        if (defActActive && defAct.id === 'a2') dmgReduction += 2;
         if (defender.shield) { dmgReduction += 2; defender.shield = false; }
 
         let finalDamage = Math.max(0, (totalAtk - effectiveDef) - dmgReduction);
-        if (atkChar.id === 'c2' && finalDamage > 0) finalDamage += 1; // التنين المحترق
+        if (atkChar.id === 'c2' && finalDamage > 0) finalDamage += 1;
 
-        // تطبيق الضرر
         defender.energy = Math.max(0, defender.energy - finalDamage);
         defender.attacks += 1;
 
-        // ردود الفعل واستعادة الطاقة
         let extraLog = '';
         if (atkChar.id === 'c9' && finalDamage > 0) {
           attacker.energy = Math.min(15, attacker.energy + 1);
@@ -963,7 +955,6 @@
           extraLog += ` الصدمة المرتدة لـ «صاعق البرق» ألحقت نقطتي ضرر بالمهاجم!`;
         }
 
-        // فحص الإقصاء
         [attacker, defender].forEach(p => {
           if (!p.dead && p.energy <= 0) {
             p.dead = true; p.energy = 0;
@@ -972,7 +963,6 @@
           }
         });
 
-        // تجهيز تقرير ما حدث
         const resultReport = {
           attackerName: attacker.name,
           defenderName: defender.name,
@@ -989,8 +979,10 @@
         };
 
         this.state.logs.unshift(`نتيجة الهجوم: تسبب ${attacker.name} بـ ${toAr(finalDamage)} ضرر على ${defender.name}.`);
-
         this.pendingAttack = null;
+
+        // انتقال الدور حتمياً ومباشرة بعد الهجوم مهما كانت نتيجته
+        this.advanceTurn();
 
         if (this.mode === 'local') {
           this.displayClashResult(resultReport);
@@ -1027,8 +1019,9 @@
 
       closeClashResultAndNext() {
         document.getElementById('modal-clash-result').classList.remove('active');
-        // الانتقال التلقائي للدور التالي بعد انتهاء الهجوم والاطلاع على النتيجة
-        this.endTurn();
+        if (this.mode === 'local') {
+          this.startLocalTurn();
+        }
       },
 
       executeGeneralAction(actUid, targetId) {
@@ -1076,7 +1069,7 @@
 
         this.state.logs.unshift(`لعب ${player.name} بطاقة الأكشن «${card.name}».`);
 
-        // إنهاء الدور تلقائياً بعد لعب بطاقة الأكشن
+        // انتقال الدور تلقائياً بعد لعب كرت أكشن عام
         this.advanceTurn();
 
         if (this.mode === 'local') this.startLocalTurn();
@@ -1123,14 +1116,16 @@
           this.state.logs.unshift(`بدأت الجولة ${toAr(this.state.round)}؛ وتصفرت عدادات الحماية.`);
         }
 
+        // تجديد يد اللاعب الجديد تلقائياً حتى 6 كروت
+        const nextP = this.state.players[idx];
+        const h = this.state.hands[nextP.id];
+        const needed = Math.max(0, 6 - h.length);
+        for (let i = 0; i < needed; i++) {
+          const card = this.drawOne();
+          if (card) { h.push(card); nextP.count = h.length; }
+        }
+
         if (this.mode === 'online') {
-          const nextP = this.state.players[idx];
-          const h = this.state.hands[nextP.id];
-          const needed = Math.max(0, 6 - h.length);
-          for (let i = 0; i < needed; i++) {
-            const card = this.drawOne();
-            if (card) { h.push(card); nextP.count++; }
-          }
           this.sync();
         }
       }
