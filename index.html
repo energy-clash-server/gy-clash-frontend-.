@@ -1,16 +1,14 @@
-هذا كود ملف واحد فقط (index.html) تفتحه مباشرة في المتصفح (دبل كليك) ويعمل
-فوراً، دون الحاجة لأي خادم، ولا أوامر Node.js، ولا رفع لـ GitHub.
+نعم، كان هناك انقطاع بسبب طول الرسالة. إليك الكود كاملاً ومُصححاً من البداية حتى
+النهاية في ملف واحد (index.html).
 
-يجمع هذا الملف مميزات الإصدارين:
+تم إصلاح المشكلة جذرياً:
 
-1.  خيار «لعب محلي (على نفس الجهاز)»: يعمل بدون إنترنت نهائياً مع شاشة سرية
-    لتمرير الجهاز وحجب بطاقات الخصوم.
-2.  خيار «لعب أونلاين (عبر رمز الغرفة)»: يربطك أنت وأصدقاؤك من أجهزة مختلفة عبر
-    تقنية P2P السحابية المدمجة مجاناً وبدون أي إعدادات خارجية.
-3.  تطبيق صارم لكافة القواعد: (تجديد اليد حتى ٦ بطاقات، منع التجمع بهجومين كحد
-    أقصى، الـ ٨٠ بطاقة، الطاقات من ٠ لـ ١٥، ونظام المواجهات وحساب الضرر).
-
-احفظ النص التالي في ملف باسم index.html:
+1.  انتقال شاشة المضيف فوراً مع بقية اللاعبين إلى ساحة المعركة عند ضغط «بدء
+    المباراة الآن».
+2.  بدء الدور الأول عند المضيف دائماً ليلعب بطاقاته مباشرة، ثم يتناوب الدور مع
+    الضيوف.
+3.  توضيح حالة الدور بشكل بارز: يظهر شريط ذهبي للمتحكم يقول (دورك الآن! اختر
+    ورقة)، بينما يظهر شريط رمادي للآخرين (انتظر دورك...).
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -22,34 +20,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <!-- مكتبة الاتصال المباشر للأونلاين دون سيرفر -->
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
   <style>
     :root {
-      --bg: #07070a;
-      --panel: #111118;
-      --border: #2c271c;
-      --gold: #d4af37;
-      --gold-light: #fae48c;
-      --red: #d33c3c;
-      --blue: #3b82f6;
-      --text: #f0f0f5;
-      --muted: #9e9ea8;
+      --bg: #07070a; --panel: #111118; --border: #2c271c;
+      --gold: #d4af37; --gold-light: #fae48c; --red: #d33c3c;
+      --text: #f0f0f5; --muted: #9e9ea8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: 'Cairo', sans-serif; }
-    body { background-color: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+    body { background-color: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; display: flex; flex-direction: column; }
 
     .btn {
       font-weight: 700; border: 1px solid var(--gold);
       background: linear-gradient(135deg, #2b2312, #15120a); color: var(--gold-light);
-      padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+      padding: 9px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s;
       display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem;
     }
     .btn:hover { background: #3d3119; transform: translateY(-2px); border-color: var(--gold-light); }
     .btn-sec { border-color: #3f3f4e; background: #1c1c24; color: #cfcfe0; }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
-    
+
     .input {
       width: 100%; padding: 10px; background: #09090d; border: 1px solid #333342;
       border-radius: 8px; color: #fff; text-align: center; font-size: 1rem; outline: none;
@@ -59,17 +50,17 @@
     .screen { display: none; min-height: 100vh; width: 100%; flex-direction: column; }
     .screen.active { display: flex; }
 
-    /* شاشة البداية */
-    #start-screen { justify-content: center; align-items: center; text-align: center; padding: 20px; }
+    /* القائمة */
+    #screen-menu { justify-content: center; align-items: center; text-align: center; padding: 20px; }
     .logo {
       font-size: 3.2rem; font-weight: 900;
       background: linear-gradient(180deg, #fff3c4, #d4af37, #876d1a);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px;
     }
     .box {
-      background: var(--panel); border: 1px solid var(--border); padding: 22px;
+      background: var(--panel); border: 1px solid var(--border); padding: 20px;
       border-radius: 12px; width: 100%; max-width: 360px; display: flex;
-      flex-direction: column; gap: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+      flex-direction: column; gap: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.8);
     }
 
     /* رأس المباراة */
@@ -82,36 +73,36 @@
 
     /* ساحة المعركة */
     .field { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 1300px; width: 100%; margin: 0 auto; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
     .p-card {
       background: #13131a; border: 1px solid #262633; border-radius: 8px; padding: 8px 10px;
       cursor: pointer; transition: 0.2s; position: relative;
     }
-    .p-card.turn { border-color: var(--gold); background: #1c1a12; }
+    .p-card.turn { border-color: var(--gold); background: #1c1a12; box-shadow: 0 0 10px rgba(212,175,55,0.3); }
     .p-card.target { border-color: var(--red); background: #261113; }
     .p-card.dead { opacity: 0.35; pointer-events: none; }
     .bar { background: #09090c; height: 16px; border-radius: 4px; position: relative; overflow: hidden; margin: 5px 0; border: 1px solid #232330; }
     .fill { background: linear-gradient(90deg, #997a15, #d4af37, #f7e089); height: 100%; transition: width 0.3s; }
     .bar-txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #000; }
 
-    .arena-grid { display: grid; grid-template-columns: 1fr 300px; gap: 10px; min-height: 170px; }
+    .arena-grid { display: grid; grid-template-columns: 1fr 280px; gap: 10px; min-height: 160px; }
     @media (max-width: 800px) { .arena-grid { grid-template-columns: 1fr; } }
-    .stage { background: #101016; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; }
-    .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
+    .stage { background: #101016; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
+    .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
     .log-row { padding: 3px 6px; background: #14141e; border-radius: 4px; border-right: 3px solid var(--gold); }
 
-    /* يد اللاعب */
+    /* اليد */
     .hand { background: #0f0f14; border-top: 1px solid var(--border); padding: 10px; margin-top: auto; }
     .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
     .card {
-      min-width: 145px; max-width: 155px; background: #171722; border: 1px solid #333342;
+      min-width: 140px; max-width: 150px; background: #171722; border: 1px solid #333342;
       border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: 0.2s;
     }
     .card:hover { transform: translateY(-4px); border-color: var(--gold); }
-    .card.sel { border-color: var(--gold-light); background: #1c1a12; transform: translateY(-6px); }
+    .card.sel { border-color: var(--gold-light); background: #1c1a12; transform: translateY(-6px); box-shadow: 0 0 10px rgba(212,175,55,0.3); }
     .card-name { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .stats { display: flex; justify-content: space-around; background: #0c0c10; padding: 2px 0; border-radius: 4px; font-weight: 800; font-size: 0.75rem; }
-    .desc { font-size: 0.7rem; color: var(--muted); min-height: 42px; line-height: 1.35; }
+    .desc { font-size: 0.7rem; color: var(--muted); min-height: 40px; line-height: 1.3; }
     .tier { font-size: 0.65rem; color: var(--gold); text-align: center; border-top: 1px solid #22222e; padding-top: 2px; }
 
     /* النوافذ المودال */
@@ -119,8 +110,8 @@
     .modal.active { display: flex; }
     .modal-box {
       background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
-      width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; padding: 20px;
-      display: flex; flex-direction: column; gap: 12px;
+      width: 100%; max-width: 440px; max-height: 85vh; overflow-y: auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
     }
   </style>
 </head>
@@ -134,7 +125,6 @@
     </div>
     <div class="box" style="margin: 0 auto auto auto;">
       <input type="text" id="user-name" class="input" placeholder="اكتب اسمك المستعار" maxlength="12">
-      
       <button class="btn" onclick="Game.showLocalSetup()">لعب محلي (على هذا الجهاز)</button>
       <button class="btn btn-sec" onclick="Game.showOnlineSetup()">لعب أونلاين (أجهزة متعددة)</button>
       <button class="btn btn-sec" onclick="Game.showGallery()">معرض البطاقات</button>
@@ -142,17 +132,16 @@
     </div>
   </section>
 
-  <!-- ٢. شاشة تحضير الأونلاين -->
+  <!-- ٢. إعداد الأونلاين -->
   <section id="screen-online" class="screen" style="justify-content: center; align-items: center; padding: 20px;">
     <div class="box">
-      <h3 style="color: var(--gold-light); text-align: center;">اللعب الجماعي عبر الإنترنت</h3>
+      <h3 style="color: var(--gold-light); text-align: center;">اللعب عبر الإنترنت</h3>
       <select id="online-max-p" class="input">
         <option value="2">لاعبان (٢)</option>
         <option value="3">ثلاثة لاعبين (٣)</option>
         <option value="4">أربعة لاعبين (٤)</option>
       </select>
       <button class="btn" onclick="Game.createOnlineRoom()">إنشاء غرفة جديدة</button>
-      
       <div style="border-top: 1px solid #282834; padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
         <input type="text" id="join-code" class="input" placeholder="أدخل رمز الغرفة" style="text-transform: uppercase;">
         <button class="btn btn-sec" onclick="Game.joinOnlineRoom()">الانضمام لغرفة صديق</button>
@@ -161,7 +150,7 @@
     </div>
   </section>
 
-  <!-- ٣. ردهة الانتظار للأونلاين -->
+  <!-- ٣. ردهة الانتظار -->
   <section id="screen-wait" class="screen" style="justify-content: center; align-items: center; padding: 20px;">
     <div class="box" style="text-align: center;">
       <h3 style="color: var(--gold-light);">غرفة الانتظار</h3>
@@ -208,12 +197,12 @@
     </footer>
   </section>
 
-  <!-- نافذة حجب الرؤية وتمرير الجهاز (للعب المحلي) -->
+  <!-- نافذة التمرير (محلي) -->
   <div id="modal-pass" class="modal">
     <div class="box" style="text-align: center;">
       <div style="font-size: 3rem;">🛡️</div>
       <h3 style="color: var(--gold-light);" id="pass-player-name">دور اللاعب</h3>
-      <p style="color: #aaa; font-size: 0.9rem;">مرر الجهاز للاعب المذكور، واضغط الزر لعرض البطاقات بسرية.</p>
+      <p style="color: #aaa; font-size: 0.9rem;">مرر الجهاز للاعب المذكور، ثم اضغط لعرض بطاقاته بسرية.</p>
       <button class="btn" onclick="Game.unlockHand()">إظهار بطاقاتي</button>
     </div>
   </div>
@@ -221,21 +210,21 @@
   <!-- نافذة المعرض -->
   <div id="modal-gallery" class="modal">
     <div class="modal-box" style="max-width: 600px;">
-      <h3 style="color: var(--gold-light);">معرض البطاقات الأساسية</h3>
+      <h3 style="color: var(--gold-light);">معرض البطاقات</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; max-height: 60vh; overflow-y: auto;" id="gallery-container"></div>
       <button class="btn btn-sec" onclick="Game.closeModals()">إغلاق</button>
     </div>
   </div>
 
-  <!-- نافذة طريقة اللعب -->
+  <!-- نافذة القواعد -->
   <div id="modal-rules" class="modal">
     <div class="modal-box">
       <h3 style="color: var(--gold-light);">طريقة اللعب والقواعد</h3>
       <div style="font-size: 0.85rem; line-height: 1.8; color: #ddd;">
-        <p>• <b>البداية:</b> يبدأ كل لاعب بـ ١٥ طاقة، و٥ بطاقات في اليد.</p>
-        <p>• <b>تجديد اليد:</b> في بداية دورك، تسحب تلقائياً حتى تمتلئ يدك إلى ٦ بطاقات إن توفرت.</p>
-        <p>• <b>قانون منع التجمع:</b> لا يجوز استهداف أي لاعب بأكثر من هجومين خلال نفس الجولة لحمايته من التكتل.</p>
-        <p>• <b>المواجهات:</b> الضرر = الهجوم − الدفاع (إذا كان سالباً يصبح صفراً) مع تطبيق قدرات البطاقات.</p>
+        <p>• <b>البداية:</b> يبدأ كل لاعب بـ ١٥ طاقة، و٥ بطاقات باليد.</p>
+        <p>• <b>تجديد اليد:</b> ببداية دورك، تسحب تلقائياً حتى تمتلئ يدك إلى ٦ بطاقات إن توفرت كروت.</p>
+        <p>• <b>منع التجمع:</b> لا يجوز استهداف أي لاعب بأكثر من هجومين بنفس الجولة.</p>
+        <p>• <b>المواجهات:</b> الضرر = الهجوم − الدفاع (إذا كان سالباً يصبح صفراً) مع تطبيق القدرات.</p>
       </div>
       <button class="btn btn-sec" onclick="Game.closeModals()">فهمت ذلك</button>
     </div>
@@ -257,7 +246,6 @@
       return n.toString().replace(/[0-9]/g, d => ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
     }
 
-    // الـ ٢٠ شخصية
     const CHARACTERS = [
       { id: 'c1', name: 'الفارس الحديدي', atk: 4, def: 5, desc: 'عند الدفاع، يخفض هجوم الخصم بنقطتين.', tier: 'متوسطة' },
       { id: 'c2', name: 'التنين المحترق', atk: 5, def: 3, desc: 'إذا تسبب بضرر، يضيف نقطة ضرر إضافية.', tier: 'قوية' },
@@ -281,7 +269,6 @@
       { id: 'c20', name: 'متصيد الكهوف', atk: 3, def: 3, desc: 'مقاتل متزن يستفيد من عثرات الخصوم.', tier: 'ضعيفة' }
     ];
 
-    // الـ ١٢ أكشن
     const ACTIONS = [
       { id: 'a1', name: 'رفض الأكشن', type: 'counter', desc: 'يلغي بطاقة أكشن واحدة قبل تطبيق تأثيرها.', tier: 'متوسطة' },
       { id: 'a2', name: 'الدرع الواقي', type: 'def', val: 2, desc: 'يقلل الضرر الناتج عن هجوم بمقدار نقطتين.', tier: 'ضعيفة' },
@@ -318,12 +305,11 @@
       return a;
     }
 
-    // محرك اللعبة الشامل
     const Game = {
-      mode: 'local', // 'local' أو 'online'
+      mode: 'local',
       peer: null, conn: null, connections: [],
       isHost: false, myId: null, myName: '',
-      state: null, selCardId: null, selTargetId: null,
+      state: null, selCardId: null, selTargetId: null, myHand: [],
 
       goMenu() {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -353,7 +339,7 @@
         document.getElementById('modal-gallery').classList.add('active');
       },
 
-      // تجهيز اللعب المحلي (بدون إنترنت نهائياً)
+      // اللعب المحلي
       showLocalSetup() {
         const name = document.getElementById('user-name').value.trim() || 'اللاعب ١';
         const num = prompt('اختر عدد اللاعبين على هذا الجهاز (٢ أو ٣ أو ٤):', '2');
@@ -389,7 +375,6 @@
 
       startLocalTurn() {
         const p = this.state.players[this.state.turnIdx];
-        // قاعدة التجديد: إذا كان معه ٤ يسحب ٢، وإذا ٥ يسحب ١ حتى يصل ٦
         const h = this.state.hands[p.id];
         const needed = Math.max(0, 6 - h.length);
         for (let i = 0; i < needed; i++) {
@@ -408,7 +393,7 @@
         this.render();
       },
 
-      // تجهيز اللعب أونلاين
+      // تحضير الأونلاين
       showOnlineSetup() {
         const name = document.getElementById('user-name').value.trim();
         if (!name) return alert('يرجى كتابة اسمك المستعار أولاً');
@@ -489,7 +474,7 @@
         box.innerHTML = '';
         this.state.players.forEach(p => {
           const d = document.createElement('div');
-          d.innerHTML = `<span>${p.name}</span> <b style="color:var(--gold); float:left;">جاهز</b>`;
+          d.innerHTML = `<span>${p.name} ${p.id === 'p_host' ? '(المضيف)' : ''}</span> <b style="color:var(--gold); float:left;">جاهز</b>`;
           box.appendChild(d);
         });
 
@@ -500,25 +485,33 @@
         }
       },
 
+      // بدء اللعب للمضيف وإصلاح مشكلة عدم مشاركته
       hostStartOnline() {
         this.state.started = true;
         this.state.deck = createDeck();
-        this.state.players = shuffle(this.state.players);
+
+        // نضمن أن المضيف هو رقم 0 ليبدأ دوره فوراً
+        this.state.turnIdx = 0;
 
         this.state.players.forEach(p => {
           this.state.hands[p.id] = this.state.deck.splice(0, 5);
           p.count = 5;
         });
 
-        // تجديد يد اللاعب الأول
-        const p1 = this.state.players[0];
-        const needed = Math.max(0, 6 - this.state.hands[p1.id].length);
+        // تجديد يد المضيف حتى 6 بطاقات
+        const hostP = this.state.players[0];
+        const needed = Math.max(0, 6 - this.state.hands[hostP.id].length);
         for (let i = 0; i < needed; i++) {
           const card = this.drawOne();
-          if (card) { this.state.hands[p1.id].push(card); p1.count++; }
+          if (card) { this.state.hands[hostP.id].push(card); hostP.count++; }
         }
 
-        this.state.logs.unshift(`بدأت المباراة! الدور لـ ${p1.name}.`);
+        this.state.logs.unshift(`بدأت المباراة! الدور الآن لك يا ${hostP.name}.`);
+
+        // انتقال شاشة المضيف فوراً لساحة القتال
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-game').classList.add('active');
+
         this.sync();
       },
 
@@ -545,36 +538,44 @@
       },
 
       sanitizeState() {
-        // حماية سرية البطاقات أونلاين: إخفاء بطاقات أيدي الخصوم
         const copy = JSON.parse(JSON.stringify(this.state));
         delete copy.hands;
         return copy;
       },
 
-      // رسم الواجهة المشتركة
       render() {
         const s = this.state;
+        if (!s) return;
+
         document.getElementById('head-mode').textContent = this.mode === 'local' ? 'محلي' : 'أونلاين';
         document.getElementById('head-round').textContent = toAr(s.round);
         document.getElementById('head-deck').textContent = toAr(s.deck.length);
         document.getElementById('head-disc').textContent = toAr(s.disc.length);
 
         const curPlayer = s.players[s.turnIdx];
-        const isMyTurn = (this.mode === 'local') ? true : (curPlayer.id === this.myId);
+        const isMyTurn = (this.mode === 'local') ? true : (curPlayer && curPlayer.id === this.myId);
 
-        document.getElementById('turn-banner').textContent = `الدور الحالي: ${curPlayer.name}`;
+        const banner = document.getElementById('turn-banner');
+        if (isMyTurn) {
+          banner.textContent = `★ دورك الآن (${curPlayer.name}) - العب بطاقة أو أنهِ دورك ★`;
+          banner.style.color = 'var(--gold-light)';
+        } else {
+          banner.textContent = `انتظر دورك (الدور الحالي لـ: ${curPlayer ? curPlayer.name : ''})`;
+          banner.style.color = 'var(--muted)';
+        }
+
         document.getElementById('btn-end-turn').disabled = !isMyTurn;
 
         // قائمة اللاعبين
         const pList = document.getElementById('players-list');
         pList.innerHTML = '';
         s.players.forEach(p => {
-          const isTurn = p.id === curPlayer.id;
+          const isTurn = curPlayer && p.id === curPlayer.id;
           const isTarget = p.id === this.selTargetId;
           const el = document.createElement('div');
           el.className = `p-card ${isTurn ? 'turn' : ''} ${isTarget ? 'target' : ''} ${p.dead ? 'dead' : ''}`;
-          
-          if (!p.dead && p.id !== curPlayer.id) {
+
+          if (!p.dead && curPlayer && p.id !== curPlayer.id) {
             el.onclick = () => { this.selTargetId = p.id; this.render(); };
           }
 
@@ -583,7 +584,7 @@
 
           el.innerHTML = `
             <div style="display:flex; justify-content:space-between; font-weight:800; font-size:0.9rem;">
-              <span>${p.name}</span>
+              <span>${p.name} ${p.id === this.myId ? '(أنت)' : ''}</span>
               ${p.dead ? '<span style="color:var(--red);">مُقصى</span>' : ''}
             </div>
             <div class="bar">
@@ -598,7 +599,7 @@
           pList.appendChild(el);
         });
 
-        // بطاقات اليد
+        // بطاقات يد اللاعب
         const hand = (this.mode === 'local') ? s.hands[curPlayer.id] : this.myHand;
         document.getElementById('hand-title').textContent = `بطاقاتي (${toAr(hand.length)} من ٦)`;
         const hList = document.getElementById('my-cards-container');
@@ -625,10 +626,9 @@
           hList.appendChild(el);
         });
 
-        // خيارات التنفيذ
         this.renderActions(curPlayer, isMyTurn, hand);
 
-        // السجل
+        // سجل الأحداث
         const lBox = document.getElementById('logs-box');
         lBox.innerHTML = s.logs.map(l => `<div class="log-row">${l}</div>`).join('');
 
@@ -645,13 +645,13 @@
         const box = document.getElementById('action-buttons-box');
         box.innerHTML = '';
 
-        if (!isMyTurn) { hint.textContent = 'انتظر حتى ينتهي دور الخصم...'; return; }
+        if (!isMyTurn) { hint.textContent = 'ليس دورك الآن، انتظر حتى ينتهي الخصم من حركته...'; return; }
 
         const card = hand.find(c => c.uid === this.selCardId);
-        if (!card) { hint.textContent = 'اختر بطاقة من يدك للعبها، أو أنهِ دورك'; return; }
+        if (!card) { hint.textContent = 'اختر ورقة من يدك بالأسفل للعبها، أو اضغط على «إنهاء دوري»'; return; }
 
         if (card.isChar) {
-          hint.textContent = `مقاتل: «${card.name}». انقر على أحد الخصوم لتحديده`;
+          hint.textContent = `مقاتل: «${card.name}». انقر على بطاقة أحد الخصوم بالأعلى لتحديده هدفاً`;
           if (this.selTargetId) {
             const target = this.state.players.find(p => p.id === this.selTargetId);
             const btn = document.createElement('button');
@@ -671,7 +671,7 @@
               btn.onclick = () => this.executePlay(card.uid, target.id);
               box.appendChild(btn);
             } else {
-              hint.textContent += ' [يجب تحديد هدف بالضغط عليه]';
+              hint.textContent += ' [يجب تحديد لاعب مستهدف بالنقر عليه أولاً]';
             }
           } else {
             const btn = document.createElement('button');
@@ -710,11 +710,9 @@
 
         const target = this.state.players.find(p => p.id === targetId);
 
-        // تنفيذ الهجوم
         if (card.isChar && target) {
-          // قانون منع التجمع (أقصى هجومين في الجولة)
           if (target.attacks >= 2) {
-            alert(`الهدف ${target.name} محمي بقانون منع التجمع (تلقى هجومين هذه الجولة)!`);
+            alert(`الهدف ${target.name} محمي بقانون منع التجمع (تلقى هجومين في هذه الجولة)!`);
             hand.push(card);
             return;
           }
@@ -725,7 +723,6 @@
           if (card.id === 'c7' && player.energy <= 5) atk += 1;
           if (card.id === 'c10' && target.energy > player.energy) atk += 2;
 
-          // دفاع تلقائي للمدافع إن ملك شخصية في يده
           const tHand = this.state.hands[target.id] || [];
           const defIdx = tHand.findIndex(c => c.isChar);
           let defCard = null;
@@ -756,7 +753,6 @@
             this.state.logs.unshift(`الصدمة المرتدة لصاعق البرق أصابت ${player.name} بنقطتي ضرر.`);
           }
         } else {
-          // تأثيرات الأكشن
           switch (card.type) {
             case 'heal': player.energy = Math.min(15, player.energy + 2); break;
             case 'temp_shield': player.shield = true; break;
@@ -781,7 +777,6 @@
           this.state.logs.unshift(`لعب ${player.name} بطاقة «${card.name}».`);
         }
 
-        // فحص الإقصاء
         this.state.players.forEach(p => {
           if (!p.dead && p.energy <= 0) {
             p.dead = true; p.energy = 0;
@@ -836,7 +831,6 @@
         }
 
         if (this.mode === 'online') {
-          // تجديد يد اللاعب الجديد أونلاين
           const nextP = this.state.players[idx];
           const h = this.state.hands[nextP.id];
           const needed = Math.max(0, 6 - h.length);
@@ -852,13 +846,5 @@
 </body>
 </html>
 
-كيف تشغلها؟
-
-1.  افتح المفكرة (Notepad) أو أي محرر نصوص والصق الكود أعلاه كاملاً.
-2.  احفظ الملف باسم index.html.
-3.  اضغط عليه مرتين لفتحه في أي متصفح:
-      - إذا أردت اللعب على جهازك فقط: اضغط «لعب محلي»، وحدد عدد اللاعبين والعب
-        فوراً.
-      - إذا أردت اللعب مع أصدقائك من أجهزة مختلفة: اضغط «لعب أونلاين» ثم «إنشاء
-        غرفة»، وشارك رمز الغرفة معهم ليدخلوا من هواتفهم ويلعبوا معك بالوقت
-        الفعلي.
+احفظ هذا الملف وافتحه مباشرة في المتصفح وجرب إنشاء الغرفة، وستجد أن شاشتك تنتقل
+فوراً إلى ساحة المعركة، والدور سيكون متاحاً لك لتلعب أول بطاقة بكل سلاسة!
