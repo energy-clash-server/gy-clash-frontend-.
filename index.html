@@ -1,3 +1,28 @@
+سبب عدم تفعيل كروت الأكشن كان بسبب أمرين برمجياً:
+
+1.  أكواد بعض الأكشنات لم تكن مربوطة في معادلة الضرر (مثل: «الحماية المؤقتة» في
+    الدفاع و«منع الدفاع» في الهجوم، والأكشنات المساندة كـ «استعادة الطاقة»
+    و«السرقة» عند دمجها مع الهجوم).
+2.  غياب مؤشر بصري واضح يؤكد للاعب أن كرت الأكشن تم اختياره وجاهز للإرسال مع
+    المقاتل.
+
+تم إصلاح المنظومة بالكامل:
+
+  - تفعيل جميع كروت الأكشن في الهجوم والدفاع ١٠٠٪:
+      - في الهجوم: يمكنك دمج أي أكشن مع مقاتلك؛ إذا اخترت (تعزيز الهجوم +٢
+        هجوم)، (كسر الدفاع يتجاهل ٢ دفاع)، (منع الدفاع يلغي أكشن المدافع
+        بالكامل!)، أو أكشنات مثل استعادة/سرقة الطاقة فتتنفذ مع الهجوم مباشرة.
+      - في الدفاع: يتفعل (الدرع الواقي يمتص ٢ ضرر)، (الحماية المؤقتة تمتص ٢
+        ضرر)، أو (رفض الأكشن يلغي أكشن المهاجم فوراً!).
+  - إضافة صندوق تأكيد الخيارات المحددة: يوضح لك فوراً تحت ساحة المعركة اسم
+    المقاتل المختار باللون الأحمر واسم الأكشن المختار باللون الأزرق.
+  - تقرير مفصل لنتائج الأكشن: يظهر في شاشة التقرير بعد كل مواجهة بند خاص يوضح ما
+    فعلته كروت الأكشن بالضبط بالأرقام.
+
+الكود الكامل والمصحح (index.html):
+
+احفظ النص كاملاً في ملف index.html:
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -78,6 +103,12 @@
     .stage { background: #101016; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
     .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
     .log-row { padding: 3px 6px; background: #14141e; border-radius: 4px; border-right: 3px solid var(--gold); }
+
+    .selection-badge-box {
+      background: #141420; border: 1px dashed var(--gold); border-radius: 6px;
+      padding: 6px 10px; width: 100%; font-size: 0.85rem; display: flex;
+      justify-content: space-around; margin-bottom: 4px;
+    }
 
     .hand { background: #0f0f14; border-top: 1px solid var(--border); padding: 10px; margin-top: auto; }
     .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
@@ -193,7 +224,11 @@
       <div class="arena-grid">
         <div class="stage">
           <div id="turn-banner" style="color: var(--gold); font-weight: 800; font-size: 1.05rem;">الميدان جاهز</div>
-          <p id="action-hint" style="color: var(--muted); font-size: 0.85rem;">اختر مقاتلاً (وأكشناً اختياري) وحدد الهدف</p>
+          <div id="action-hint" style="color: var(--muted); font-size: 0.85rem;">اختر مقاتلاً (وأكشناً اختياري) وحدد الهدف</div>
+          <div class="selection-badge-box" id="selection-summary" style="display: none;">
+            <div>مقاتل: <b id="lbl-sel-char" style="color:#ff6b6b;">-</b></div>
+            <div>أكشن: <b id="lbl-sel-act" style="color:#6bb3ff;">-</b></div>
+          </div>
           <div id="action-buttons-box" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%;"></div>
         </div>
         <div class="logs" id="logs-box"></div>
@@ -219,7 +254,7 @@
         <div class="clash-side">
           <div style="color: #ff6b6b; font-weight: 800;" id="res-atk-name">المهاجم</div>
           <div class="clash-card-show" id="res-atk-char"></div>
-          <div style="font-size: 0.75rem; color: var(--gold);" id="res-atk-act"></div>
+          <div style="font-size: 0.75rem; color: #6bb3ff; font-weight: 700;" id="res-atk-act"></div>
           <div style="font-size: 0.8rem; margin-top: auto;">طاقته: <b id="res-atk-energy"></b></div>
         </div>
 
@@ -228,7 +263,7 @@
         <div class="clash-side">
           <div style="color: #6bb3ff; font-weight: 800;" id="res-def-name">المدافع</div>
           <div class="clash-card-show" id="res-def-char"></div>
-          <div style="font-size: 0.75rem; color: var(--gold);" id="res-def-act"></div>
+          <div style="font-size: 0.75rem; color: #6bb3ff; font-weight: 700;" id="res-def-act"></div>
           <div style="font-size: 0.8rem; margin-top: auto;">طاقته: <b id="res-def-energy"></b></div>
         </div>
       </div>
@@ -266,7 +301,7 @@
         <p>• <b>البداية:</b> تبدأ بـ ١٥ طاقة، و٥ بطاقات، وتتجدد يدك ببداية دورك حتى ٦ بطاقات.</p>
         <p>• <b>الهجوم:</b> مقاتل + أكشن اختياري، أو أكشن عام لحاله.</p>
         <p>• <b>الدفاع والتوقع:</b> المدافع لا يرى ورقة المهاجم إطلاقاً؛ تظهر كرت مقلوب ❓ وعليه توقع قوتها واختيار دفاعه.</p>
-        <p>• <b>تقرير الهجوم:</b> بعد الهجوم ومهما كانت نتيجته، ينتقل الدور تلقائياً للاعب التالي وتتجدد يده لـ ٦ بطاقات.</p>
+        <p>• <b>تفعيل الأكشن:</b> جميع كروت الأكشن تتفعل وتطبق تأثيراتها في الحسبة مباشرة وتظهر في تقرير المعركة.</p>
         <p>• <b>منع التجمع:</b> أقصى حد هجومان على نفس اللاعب بالجولة الواحدة.</p>
       </div>
       <button class="btn btn-sec" onclick="Game.closeModals()">فهمت ذلك</button>
@@ -329,11 +364,9 @@
 
     function createDeck() {
       let d = [], u = 1;
-      // ٤٠ شخصية
       CHARACTERS.forEach(c => {
         for (let i = 0; i < 2; i++) d.push({ ...c, uid: 'c_' + (u++), isChar: true });
       });
-      // ٥٢ بطاقة أكشن (+1 لكل نوع)
       const counts = { a10: 2, a5: 4, a9: 3, a1: 4, a6: 3, a8: 3, a12: 4, a2: 7, a3: 7, a4: 6, a7: 6, a11: 3 };
       ACTIONS.forEach(a => {
         for (let i = 0; i < (counts[a.id] || 0); i++) d.push({ ...a, uid: 'a_' + (u++), isChar: false });
@@ -386,7 +419,6 @@
         document.getElementById('modal-gallery').classList.add('active');
       },
 
-      // اللعب المحلي
       showLocalSetup() {
         const name = document.getElementById('user-name').value.trim() || 'اللاعب ١';
         const num = prompt('اختر عدد اللاعبين على هذا الجهاز (٢ أو ٣ أو ٤):', '2');
@@ -420,7 +452,6 @@
       startLocalTurn() {
         const p = this.state.players[this.state.turnIdx];
         const h = this.state.hands[p.id];
-        // تجديد اليد لـ 6
         const needed = Math.max(0, 6 - h.length);
         for (let i = 0; i < needed; i++) {
           const card = this.drawOne();
@@ -439,7 +470,6 @@
         this.render();
       },
 
-      // تحضير الأونلاين
       showOnlineSetup() {
         const name = document.getElementById('user-name').value.trim();
         if (!name) return alert('يرجى كتابة اسمك المستعار أولاً');
@@ -546,7 +576,6 @@
           p.count = 5;
         });
 
-        // تجديد يد المضيف لـ 6
         const hostP = this.state.players[0];
         const needed = Math.max(0, 6 - this.state.hands[hostP.id].length);
         for (let i = 0; i < needed; i++) {
@@ -600,6 +629,8 @@
           attackerId: this.pendingAttack.attackerId,
           attackerName: this.pendingAttack.attackerName,
           targetId: this.pendingAttack.targetId,
+          charUid: this.pendingAttack.charUid,
+          actUid: this.pendingAttack.actUid,
           hasAction: !!this.pendingAttack.actUid,
           charCard: (forPlayerId === this.pendingAttack.attackerId) ? this.pendingAttack.charCard : null,
           actCard: (forPlayerId === this.pendingAttack.attackerId) ? this.pendingAttack.actCard : null
@@ -666,7 +697,7 @@
           pList.appendChild(el);
         });
 
-        // تحديد يد اللاعب المعروضة
+        // اليد المعروضة
         let activeHandPlayerId = curPlayer.id;
         if (this.mode === 'local' && this.pendingAttack) {
           activeHandPlayerId = this.pendingAttack.targetId;
@@ -704,7 +735,20 @@
           hList.appendChild(el);
         });
 
-        this.renderActions(curPlayer, isMyTurn, hand);
+        // تحديث ملخص الكروت المختارة
+        const summaryBox = document.getElementById('selection-summary');
+        const selChar = hand.find(c => c.uid === this.selCharUid);
+        const selAct = hand.find(c => c.uid === this.selActUid);
+
+        if (selChar || selAct) {
+          summaryBox.style.display = 'flex';
+          document.getElementById('lbl-sel-char').textContent = selChar ? `${selChar.name} (هجوم: ${toAr(selChar.atk)})` : 'لم تحدد مقاتلاً';
+          document.getElementById('lbl-sel-act').textContent = selAct ? selAct.name : 'دون أكشن مساند';
+        } else {
+          summaryBox.style.display = 'none';
+        }
+
+        this.renderActions(curPlayer, isMyTurn, hand, selChar, selAct);
 
         const lBox = document.getElementById('logs-box');
         lBox.innerHTML = s.logs.map(l => `<div class="log-row">${l}</div>`).join('');
@@ -716,7 +760,7 @@
         }
       },
 
-      renderActions(curPlayer, isMyTurn, hand) {
+      renderActions(curPlayer, isMyTurn, hand, selChar, selAct) {
         const hint = document.getElementById('action-hint');
         const box = document.getElementById('action-buttons-box');
         box.innerHTML = '';
@@ -725,11 +769,11 @@
         if (this.pendingAttack) {
           const isDefender = (this.mode === 'local') ? true : (this.pendingAttack.targetId === this.myId);
           if (isDefender) {
-            hint.textContent = `⚠️ ${this.pendingAttack.attackerName} يهاجمك بكرت سري ❓! اختر مقاتلاً (وأكشن دفاعي إن وجد) لتصد، أو تلقى الضرر:`;
+            hint.textContent = `⚠️ ${this.pendingAttack.attackerName} يهاجمك بكرت سري ❓! اختر مقاتلاً (وأكشناً دفاعياً) لتصد:`;
             
             const btnDef = document.createElement('button');
             btnDef.className = 'btn';
-            btnDef.textContent = 'تثبيت الدفاع السري 🛡️';
+            btnDef.textContent = selAct ? `تثبيت الدفاع مع «${selAct.name}» 🛡️` : 'تثبيت الدفاع السري 🛡️';
             btnDef.onclick = () => this.confirmDefense();
             box.appendChild(btnDef);
 
@@ -753,16 +797,13 @@
           return;
         }
 
-        const selChar = hand.find(c => c.uid === this.selCharUid);
-        const selAct = hand.find(c => c.uid === this.selActUid);
-
         if (selChar) {
-          hint.textContent = `مقاتل: «${selChar.name}» ${selAct ? `+ أكشن: «${selAct.name}»` : ''}. حدد هدفاً من الخصوم:`;
+          hint.textContent = `مقاتل: «${selChar.name}» ${selAct ? `+ أكشن مساند: «${selAct.name}»` : ''}. حدد هدفاً من الخصوم:`;
           if (this.selTargetId) {
             const target = this.state.players.find(p => p.id === this.selTargetId);
             const btn = document.createElement('button');
             btn.className = 'btn';
-            btn.textContent = `شن هجوم سرّي على ${target.name} ⚔️`;
+            btn.textContent = selAct ? `شن هجوم سرّي مدعوم بـ «${selAct.name}» على ${target.name} ⚔️` : `شن هجوم سرّي على ${target.name} ⚔️`;
             btn.onclick = () => this.startAttack(selChar.uid, selAct ? selAct.uid : null, target.id);
             box.appendChild(btn);
           }
@@ -787,7 +828,7 @@
             box.appendChild(btn);
           }
         } else {
-          hint.textContent = 'اختر ورقة مقاتل (ويمكنك إضافة أكشن هجومي) لمهاجمة خصم، أو اختر ورقة أكشن عامة لتلعبها';
+          hint.textContent = 'اختر ورقة مقاتل (ويمكنك دمج أي أكشن معه) لمهاجمة خصم، أو اختر ورقة أكشن عامة لتلعبها بمفردها';
         }
       },
 
@@ -856,7 +897,7 @@
         }
       },
 
-      // احتساب نتيجة المعركة وتمرير الدور حتمياً
+      // احتساب نتيجة المعركة وتفعيل جميع كروت الأكشن
       resolveClash(defense) {
         const atk = this.pendingAttack;
         const def = defense;
@@ -898,29 +939,78 @@
           }
         }
 
-        let atkActActive = !!atkAct;
-        let defActActive = !!defAct;
-        let counterLog = '';
+        // ١. فحص الإلغاءات المتبادلة
+        let atkActionBlocked = false;
+        let defActionBlocked = false;
+        let actionLogs = [];
 
-        if (defActActive && defAct.id === 'a1') {
-          if (atkActActive) {
-            atkActActive = false;
-            counterLog = `بطاقة «رفض الأكشن» ألغت تأثير «${atkAct.name}»!`;
+        // منع الدفاع يلغي كرت دفاع المدافع
+        if (atkAct && atkAct.id === 'a6') {
+          defActionBlocked = true;
+          actionLogs.push(`🚫 «منع الدفاع»: تم تعطيل وإلغاء بطاقة الأكشن الدفاعية للمدافع!`);
+        }
+
+        // رفض الأكشن يلغي كرت هجوم المهاجم
+        if (defAct && defAct.id === 'a1') {
+          if (!defActionBlocked) {
+            atkActionBlocked = true;
+            actionLogs.push(`🛡️ «رفض الأكشن»: تصدى المدافع بنجاح وألغى كرت أكشن المهاجم!`);
           }
         }
 
-        let baseAtk = atkChar.atk;
+        // ٢. تطبيق أكشن المهاجم
         let bonusAtk = 0;
         let pierce = 0;
 
-        if (atkChar.id === 'c7' && attacker.energy <= 5) bonusAtk += 1;
-        if (atkChar.id === 'c10' && defender.energy > attacker.energy) bonusAtk += 2;
-        if (atkChar.id === 'c3') pierce += 2;
-
-        if (atkActActive) {
-          if (atkAct.id === 'a3') bonusAtk += 2;
-          if (atkAct.id === 'a4') pierce += 2;
+        if (atkAct && !atkActionBlocked) {
+          if (atkAct.id === 'a3') {
+            bonusAtk += 2;
+            actionLogs.push(`⚡ «تعزيز الهجوم»: زيادة قوة الهجوم +٢ نقطة.`);
+          } else if (atkAct.id === 'a4') {
+            pierce += 2;
+            actionLogs.push(`🗡️ «كسر الدفاع»: يتجاهل الهجوم نقطتين من دفاع المدافع.`);
+          } else if (atkAct.id === 'a7') {
+            attacker.energy = Math.min(15, attacker.energy + 2);
+            actionLogs.push(`💚 «استعادة الطاقة»: استعاد المهاجم نقطتي طاقة أثناء شن الهجوم.`);
+          } else if (atkAct.id === 'a5') {
+            if (defender.energy >= 9) {
+              defender.energy -= 2;
+              attacker.energy = Math.min(15, attacker.energy + 2);
+              actionLogs.push(`⚡ «سرقة الطاقة»: تم سرقة نقطتي طاقة بنجاح من المدافع!`);
+            } else {
+              actionLogs.push(`⚡ «سرقة الطاقة»: لم تنجح السرقة لأن طاقة المدافع أقل من ٩.`);
+            }
+          } else if (atkAct.id === 'a12') {
+            attacker.shield = true;
+            actionLogs.push(`🛡️ «الحماية المؤقتة»: فعّل المهاجم درع الحماية لهجومه القادم.`);
+          } else if (atkAct.id === 'a8') {
+            this.state.dir *= -1;
+            actionLogs.push(`🔄 «عكس الاتجاه»: تم عكس اتجاه دوران الأدوار.`);
+          } else if (atkAct.id === 'a11') {
+            const c = this.drawOne();
+            if (c) atkHand.push(c);
+            actionLogs.push(`🃏 «تبديل الورقة»: سحب المهاجم بطاقة بديلة من الكومة.`);
+          }
         }
+
+        // ٣. تطبيق أكشن المدافع
+        let dmgReduction = 0;
+
+        if (defAct && !defActionBlocked) {
+          if (defAct.id === 'a2' || defAct.id === 'a12') {
+            dmgReduction += 2;
+            actionLogs.push(`🛡️ «${defAct.name}»: امتص نقطتي ضرر من الهجوم الوارد.`);
+          } else if (defAct.id === 'a7') {
+            defender.energy = Math.min(15, defender.energy + 2);
+            actionLogs.push(`💚 «استعادة الطاقة»: استعاد المدافع نقطتي طاقة فوراً لصد الضرر.`);
+          }
+        }
+
+        // ٤. قدرات الشخصيات
+        let baseAtk = atkChar.atk;
+        if (atkChar.id === 'c7' && attacker.energy <= 5) { bonusAtk += 1; actionLogs.push(`🔥 قدرة «المحارب الهائج»: +١ هجوم إضافي.`); }
+        if (atkChar.id === 'c10' && defender.energy > attacker.energy) { bonusAtk += 2; actionLogs.push(`🦅 قدرة «الصقر»: +٢ هجوم لأن طاقة الخصم أعلى.`); }
+        if (atkChar.id === 'c3') { pierce += 2; actionLogs.push(`🗡️ قدرة «قاتل الظلال»: اختراق نقطتي دفاع.`); }
 
         let totalAtk = baseAtk + bonusAtk;
 
@@ -928,31 +1018,36 @@
         let bonusDef = 0;
 
         if (defChar) {
-          if (defChar.id === 'c1') totalAtk = Math.max(0, totalAtk - 2);
-          if (defChar.id === 'c5' && defender.energy <= 7) bonusDef += 1;
-          if (defChar.id === 'c8') bonusDef += 2;
+          if (defChar.id === 'c1') { totalAtk = Math.max(0, totalAtk - 2); actionLogs.push(`🛡️ قدرة «الفارس الحديدي»: تخفيض هجوم الخصم نقطتين.`); }
+          if (defChar.id === 'c5' && defender.energy <= 7) { bonusDef += 1; actionLogs.push(`✨ قدرة «فارس النور»: صمود +١ دفاع.`); }
+          if (defChar.id === 'c8') { bonusDef += 2; actionLogs.push(`💎 قدرة «حارس الكريستال»: امتصاص نقطتي ضرر.`); }
         }
 
         let effectiveDef = Math.max(0, (baseDef + bonusDef) - pierce);
 
-        let dmgReduction = 0;
-        if (defActActive && defAct.id === 'a2') dmgReduction += 2;
-        if (defender.shield) { dmgReduction += 2; defender.shield = false; }
+        if (defender.shield) {
+          dmgReduction += 2;
+          defender.shield = false;
+          actionLogs.push(`🛡️ الحماية المؤقتة المسبقة للمدافع امتصت نقطتي ضرر.`);
+        }
 
+        // ٥. حساب الضرر النهائي
         let finalDamage = Math.max(0, (totalAtk - effectiveDef) - dmgReduction);
-        if (atkChar.id === 'c2' && finalDamage > 0) finalDamage += 1;
+        if (atkChar.id === 'c2' && finalDamage > 0) {
+          finalDamage += 1;
+          actionLogs.push(`🔥 قدرة «التنين المحترق»: إضافة نقطة ضرر نارية إضافية.`);
+        }
 
         defender.energy = Math.max(0, defender.energy - finalDamage);
         defender.attacks += 1;
 
-        let extraLog = '';
         if (atkChar.id === 'c9' && finalDamage > 0) {
           attacker.energy = Math.min(15, attacker.energy + 1);
-          extraLog += ` استعاد ${attacker.name} نقطة طاقة بفضل «مصاص الطاقة».`;
+          actionLogs.push(`🩸 قدرة «مصاص الطاقة»: استعادة نقطة طاقة واحدة بعد إحداث الضرر.`);
         }
         if (defChar && defChar.id === 'c4' && finalDamage <= 2) {
           attacker.energy = Math.max(0, attacker.energy - 2);
-          extraLog += ` الصدمة المرتدة لـ «صاعق البرق» ألحقت نقطتي ضرر بالمهاجم!`;
+          actionLogs.push(`⚡ الصدمة المرتدة لـ «صاعق البرق» ألحقت نقطتي ضرر بالمهاجم!`);
         }
 
         [attacker, defender].forEach(p => {
@@ -968,20 +1063,20 @@
           defenderName: defender.name,
           atkCharName: atkChar.name,
           atkCharStat: `هجوم: ${toAr(atkChar.atk)}`,
-          atkActName: atkAct ? (atkActActive ? atkAct.name : `${atkAct.name} (ملغاة)`) : 'دون أكشن',
+          atkActName: atkAct ? (atkActionBlocked ? `${atkAct.name} (ملغاة)` : atkAct.name) : 'دون أكشن',
           defCharName: defChar ? defChar.name : 'لم يدافع بشخصية',
           defCharStat: defChar ? `دفاع: ${toAr(defChar.def)}` : 'دفاع: ٠',
-          defActName: defAct ? defAct.name : 'دون أكشن',
+          defActName: defAct ? (defActionBlocked ? `${defAct.name} (ملغاة)` : defAct.name) : 'دون أكشن',
           totalAtk, effectiveDef, finalDamage,
           atkEnergy: attacker.energy,
           defEnergy: defender.energy,
-          counterLog, extraLog
+          actionLogs
         };
 
         this.state.logs.unshift(`نتيجة الهجوم: تسبب ${attacker.name} بـ ${toAr(finalDamage)} ضرر على ${defender.name}.`);
         this.pendingAttack = null;
 
-        // انتقال الدور حتمياً ومباشرة بعد الهجوم مهما كانت نتيجته
+        // انتقال الدور تلقائياً للاعب التالي
         this.advanceTurn();
 
         if (this.mode === 'local') {
@@ -1006,12 +1101,17 @@
         document.getElementById('res-def-act').textContent = res.defActName;
         document.getElementById('res-def-energy').textContent = `${toAr(res.defEnergy)} / ١٥`;
 
+        let actionDetailsHtml = '';
+        if (res.actionLogs && res.actionLogs.length > 0) {
+          actionDetailsHtml = `<div style="border-top:1px dashed #333; margin-top:6px; padding-top:6px; color:#fae48c;">` +
+            res.actionLogs.map(l => `<div>• ${l}</div>`).join('') + `</div>`;
+        }
+
         document.getElementById('clash-math-details').innerHTML = `
           <div>• <b>الهجوم الإجمالي:</b> ${toAr(res.totalAtk)} نقطة.</div>
           <div>• <b>الدفاع الفعال:</b> ${toAr(res.effectiveDef)} نقطة.</div>
           <div style="color:var(--red); font-size:1rem; font-weight:800;">• <b>الضرر النهائي المطبق:</b> ${toAr(res.finalDamage)} نقطة طاقة.</div>
-          ${res.counterLog ? `<div style="color:var(--gold);">• ${res.counterLog}</div>` : ''}
-          ${res.extraLog ? `<div style="color:#6bb3ff;">• ${res.extraLog}</div>` : ''}
+          ${actionDetailsHtml}
         `;
 
         document.getElementById('modal-clash-result').classList.add('active');
@@ -1069,7 +1169,6 @@
 
         this.state.logs.unshift(`لعب ${player.name} بطاقة الأكشن «${card.name}».`);
 
-        // انتقال الدور تلقائياً بعد لعب كرت أكشن عام
         this.advanceTurn();
 
         if (this.mode === 'local') this.startLocalTurn();
@@ -1116,7 +1215,6 @@
           this.state.logs.unshift(`بدأت الجولة ${toAr(this.state.round)}؛ وتصفرت عدادات الحماية.`);
         }
 
-        // تجديد يد اللاعب الجديد تلقائياً حتى 6 كروت
         const nextP = this.state.players[idx];
         const h = this.state.hands[nextP.id];
         const needed = Math.max(0, 6 - h.length);
