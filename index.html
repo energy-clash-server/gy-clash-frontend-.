@@ -17,7 +17,6 @@
       --border: #3d341e;
       --gold: #d4af37;
       --gold-light: #fbe089;
-      --gold-dark: #7a6015;
       --red: #c0292b;
       --blue: #2980b9;
       --text: #f4f4f8;
@@ -131,17 +130,15 @@
     .card.sel-act { border-color: #40a9ff; background: linear-gradient(165deg, #102438 0%, #08111c 100%); transform: translateY(-7px); box-shadow: 0 0 16px rgba(64,169,255,0.5); }
     .card-name { font-weight: 800; font-size: 0.86rem; color: #fff; text-shadow: 0 1px 3px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
     
-    /* إطار اللوحة الفنية الفانتازية */
+    /* إطار اللوحة الفنية الفانتازية (Canvas) */
     .card-art-frame {
-      width: 100%; height: 130px; background: #06060c;
+      width: 100%; height: 130px; background: #06060a;
       border-radius: 6px; border: 1px solid #363020; display: flex; align-items: center; justify-content: center;
       margin: 2px 0; overflow: hidden; position: relative;
     }
-    .card-art-frame img {
-      width: 100%; height: 100%; object-fit: cover; object-position: center;
-      filter: contrast(1.1) brightness(0.95); transition: 0.3s;
+    .card-art-canvas {
+      width: 100%; height: 100%; display: block; border-radius: 5px;
     }
-    .card:hover .card-art-frame img { filter: contrast(1.15) brightness(1.05); transform: scale(1.04); }
 
     .stats {
       display: flex; justify-content: space-around; background: #09090f;
@@ -382,46 +379,290 @@
     }
 
     // ========================================================
-    // لوحات فنية فانتازية أسطورية متناسقة وعالية الدقة (Dark Fantasy Artwork)
-    // خوذ حربية مغلقة، أردية مظلمة، وحوش، وأسلحة أسطورية بدون ملامح مكشوفة ولا فتيات
+    // محرك رسم اللوحات الفانتازية المظلمة داخلياً (Dark Fantasy Canvas Engine)
+    // يرسم مقاتلين كاملين بدرع وخوذة وأسلحة وضباب مظلم دون روابط خارجية ولا صور عشوائية
     // ========================================================
-    const FANTASY_IMAGES = {
-      // المقاتلون (Full-body Armored & Beast Fantasy)
-      c1: 'https://images.unsplash.com/photo-1599839575945-a9e5af0c3fa5?auto=format&fit=crop&w=400&q=80', // الفارس الحديدي (درع كامل وخوذة قرون مغلقة)
-      c2: 'https://images.unsplash.com/photo-1577493340887-b7bfff550145?auto=format&fit=crop&w=400&q=80', // التنين المحترق (وحش تنين لهبي أسطوري)
-      c3: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', // قاتل الظلال (شبح مظلم برداء مقنع وعينين متوهجتين)
-      c4: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80', // صاعق البرق (فارس العاصفة المكهرب)
-      c5: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80', // فارس النور (درع شمسي مذهب مقفل بالكامل)
-      c6: 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=400&q=80', // ساحر الجليد (رداء صقيع أزرق وعصا بلورات)
-      c7: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=80', // المحارب الهائج (بربري مدرع بفأس دماء ضخم)
-      c8: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80', // حارس الكريستال (غولم زمردي صخري هندسي)
-      c9: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=400&q=80', // مصاص الطاقة (حاصد الأرواح المظلم بمنجل فراغ)
-      c10: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=400&q=80', // الصقر (محارب جارح بنصال ريشية وخوذة منقار)
-      c11: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=400&q=80', // حارس الرماد (درع حجارة بركانية متشققة بالحمم)
-      c12: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=400&q=80', // نينجا الرياح (محارب ظل مقنع بكاتانا زرقاء)
-      c13: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80', // جندي الترس (حارس الحصن بدرع برج هائل)
-      c14: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=400&q=80', // سيد الرمال (درع صحراوي ملثم بخناجر معقوفة)
-      c15: 'https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?auto=format&fit=crop&w=400&q=80', // صياد الضباب (قناع بخار حديدي وقوس مسنن)
-      c16: 'https://images.unsplash.com/photo-1519074069444-1ba4ea16e6f6?auto=format&fit=crop&w=400&q=80', // قناص الأطلال (منظار قنص أحمر في رداء مهجور)
-      c17: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80', // الفارس الصامت (قناع كروم أسود مصمت تماماً)
-      c18: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?auto=format&fit=crop&w=400&q=80', // رامي السهام (درع صياد غابات مظلم وقوس مشدود)
-      c19: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80', // حارس البوابة (درع قلعة صلب بقضبان حديد)
-      c20: 'https://images.unsplash.com/photo-1518709766631-a6a7f45921c3?auto=format&fit=crop&w=400&q=80', // متصيد الكهوف (كائن درعي زاحف بمخالب حجرية)
+    function drawCardArt(canvas, cardId) {
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
 
-      // بطاقات الأكشن (آثار وأسلحة سحرية أسطورية)
-      a1: 'https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=400&q=80', // رفض الأكشن (ختم حظر أحمر مشتعل)
-      a2: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80', // الدرع الواقي (درع طاقة بلورية مشعة)
-      a3: 'https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&w=400&q=80', // تعزيز الهجوم (سيف رون ناري ملتهب)
-      a4: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?auto=format&fit=crop&w=400&q=80', // كسر الدفاع (مطرقة حرب خارقة للصفائح)
-      a5: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=400&q=80', // سرقة الطاقة (دوامة فراغ أرجوانية ساحبة)
-      a6: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=400&q=80', // منع الدفاع (سلاسل حديدية ملعونة تقفل درعاً)
-      a7: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80', // استعادة الطاقة (كأس نور حيوي زمردي ساطع)
-      a8: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80', // عكس الاتجاه (حلقة أوروبروس ذهبية دائرية)
-      a9: 'https://images.unsplash.com/photo-1518709414768-a88981a4515d?auto=format&fit=crop&w=400&q=80', // إيقاف اللاعب (ساعة رملية متجمدة بسحر بنفسجي)
-      a10: 'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=400&q=80', // تبادل البطاقات (بطاقات طيفية تتبادل بين درعين)
-      a11: 'https://images.unsplash.com/photo-1542281286-9e0a16bb7366?auto=format&fit=crop&w=400&q=80', // الدور المضاعف (ساعة رملية ذهبية مزدوجة متوهجة)
-      a12: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=400&q=80'  // الحماية المؤقتة (قبة إيجيس حامية تحيط بالبطل)
-    };
+      ctx.clearRect(0, 0, w, h);
+
+      // ١. خلفيات أسطورية مظلمة بتدرجات وأجواء فانتازية
+      const bgGradients = {
+        fire: ['#3a0e08', '#140402', '#ff5722'],
+        shadow: ['#120c1f', '#06030a', '#9c27b0'],
+        storm: ['#0d1e33', '#030810', '#00d2d3'],
+        holy: ['#2e250f', '#0c0a04', '#ffd32a'],
+        frost: ['#0d2838', '#030a10', '#48dbfb'],
+        earth: ['#1b2416', '#060a04', '#10ac84'],
+        blood: ['#33080c', '#0f0203', '#ff3838'],
+        iron: ['#1e2129', '#08090c', '#bdc3c7']
+      };
+
+      // تحديد النمط البصري لكل بطاقة
+      let theme = 'iron';
+      if (['c2', 'c7', 'c11', 'a3', 'a4'].includes(cardId)) theme = 'fire';
+      else if (['c3', 'c9', 'c17', 'a5', 'a9'].includes(cardId)) theme = 'shadow';
+      else if (['c4', 'c12', 'a8', 'a12'].includes(cardId)) theme = 'storm';
+      else if (['c5', 'c10', 'a7', 'a10', 'a11'].includes(cardId)) theme = 'holy';
+      else if (['c6', 'a2'].includes(cardId)) theme = 'frost';
+      else if (['c8', 'c14', 'c15', 'c20'].includes(cardId)) theme = 'earth';
+      else if (['a1', 'a6', 'c16'].includes(cardId)) theme = 'blood';
+
+      const colors = bgGradients[theme] || bgGradients.iron;
+
+      // رسم السماء والضباب الفانتازي
+      const radGrad = ctx.createRadialGradient(w/2, h/2, 10, w/2, h/2, w*0.7);
+      radGrad.addColorStop(0, colors[0]);
+      radGrad.addColorStop(0.85, colors[1]);
+      radGrad.addColorStop(1, '#020204');
+      ctx.fillStyle = radGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // شرارات وجزيئات سحرية متطايرة في الخلفية
+      ctx.fillStyle = colors[2];
+      ctx.globalAlpha = 0.35;
+      for (let i = 0; i < 24; i++) {
+        const px = (Math.sin(i * 99 + cardId.charCodeAt(1)) * 0.5 + 0.5) * w;
+        const py = (Math.cos(i * 33 + cardId.charCodeAt(0)) * 0.5 + 0.5) * h;
+        const pr = (i % 3) + 1;
+        ctx.beginPath();
+        ctx.arc(px, py, pr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+
+      // ٢. رسم الشخصيات (جسد كامل مدرع بخوذة وسلاح وهالة)
+      if (cardId.startsWith('c')) {
+        drawFantasyWarrior(ctx, w, h, cardId, colors[2]);
+      } else {
+        // ٣. رسم بطاقات الأكشن (أسلحة ورموز سحرية أسطورية)
+        drawFantasyActionRelic(ctx, w, h, cardId, colors[2]);
+      }
+    }
+
+    // محرك رسم المحارب الفانتازي كامل الجسد
+    function drawFantasyWarrior(ctx, w, h, id, glowColor) {
+      const cx = w / 2;
+
+      // هالة إضاءة خلف المحارب
+      ctx.save();
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 20;
+
+      // رداء المحارب المتطاير في الظلام
+      ctx.fillStyle = '#0a0a10';
+      ctx.beginPath();
+      ctx.moveTo(cx - 38, 55);
+      ctx.lineTo(cx - 52, 160);
+      ctx.lineTo(cx + 52, 160);
+      ctx.lineTo(cx + 38, 55);
+      ctx.closePath();
+      ctx.fill();
+
+      // الأقدام والسيقان المدرعة (Greaves)
+      ctx.fillStyle = '#1c1c24';
+      ctx.fillRect(cx - 24, 130, 18, 45);
+      ctx.fillRect(cx + 6, 130, 18, 45);
+      ctx.fillStyle = '#2d2d3a';
+      ctx.fillRect(cx - 28, 165, 24, 12);
+      ctx.fillRect(cx + 4, 165, 24, 12);
+
+      // درع الصدر والبطن (Cuirass Plate)
+      ctx.fillStyle = '#252533';
+      ctx.beginPath();
+      ctx.moveTo(cx - 28, 55);
+      ctx.lineTo(cx + 28, 55);
+      ctx.lineTo(cx + 20, 130);
+      ctx.lineTo(cx - 20, 130);
+      ctx.closePath();
+      ctx.fill();
+
+      // زركشة وزخارف معدنية بالصدر
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, 60); ctx.lineTo(cx, 120);
+      ctx.moveTo(cx - 18, 80); ctx.lineTo(cx + 18, 80);
+      ctx.stroke();
+
+      // دروع الأكتاف الضخمة (Pauldrons)
+      ctx.fillStyle = '#3a3a4c';
+      ctx.beginPath();
+      ctx.arc(cx - 34, 60, 18, 0, Math.PI * 2);
+      ctx.arc(cx + 34, 60, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      // الأسلحة الخاصة لكل شخصية
+      ctx.fillStyle = '#e0e0e0';
+      ctx.strokeStyle = glowColor;
+      ctx.lineWidth = 3;
+
+      if (['c1', 'c5', 'c17'].includes(id)) {
+        // سيف عريض مضيء
+        ctx.beginPath();
+        ctx.moveTo(cx + 46, 25);
+        ctx.lineTo(cx + 42, 140);
+        ctx.lineTo(cx + 50, 140);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      } else if (['c7', 'c11'].includes(id)) {
+        // فأس حرب عملاق
+        ctx.beginPath();
+        ctx.moveTo(cx + 46, 20); ctx.lineTo(cx + 46, 150);
+        ctx.stroke();
+        ctx.fillStyle = '#7a1818';
+        ctx.fillRect(cx + 34, 25, 26, 35);
+      } else if (['c6', 'c9'].includes(id)) {
+        // عصا ومنجل سحري
+        ctx.beginPath();
+        ctx.moveTo(cx + 46, 15); ctx.lineTo(cx + 46, 160);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx + 46, 15, 10, 0, Math.PI * 2);
+        ctx.fillStyle = glowColor;
+        ctx.fill();
+      } else if (['c13', 'c19'].includes(id)) {
+        // درع حائطي ضخم
+        ctx.fillStyle = '#1c242e';
+        ctx.fillRect(cx - 55, 60, 30, 100);
+        ctx.strokeRect(cx - 55, 60, 30, 100);
+      }
+
+      // الخوذة الحربية الفانتازية المغلقة بالكامل (بدون وجه ولا ملامح)
+      ctx.fillStyle = '#181822';
+      ctx.beginPath();
+      ctx.arc(cx, 32, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      // فتحة الرؤية المتوهجة بالخوذة (عين ليزرية مظلمة فقط)
+      ctx.fillStyle = glowColor;
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 12;
+
+      if (['c7', 'c1', 'c2'].includes(id)) {
+        // قرون حربية
+        ctx.strokeStyle = '#8a2020';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx - 14, 25); ctx.lineTo(cx - 28, 8);
+        ctx.moveTo(cx + 14, 25); ctx.lineTo(cx + 28, 8);
+        ctx.stroke();
+      }
+
+      // فتحة القناع المضيئة
+      ctx.fillRect(cx - 10, 29, 20, 3.5);
+
+      ctx.restore();
+    }
+
+    // محرك رسم بطاقات الأكشن (أسلحة ورموز سحرية ثلاثية الأبعاد)
+    function drawFantasyActionRelic(ctx, w, h, id, glowColor) {
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.save();
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 22;
+
+      // دائرة الرون السحرية في الخلفية
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 55, 0, Math.PI * 2);
+      ctx.stroke();
+
+      if (id === 'a1') {
+        // شفرات رفض ملتهبة تلغي السحر
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cx - 35, cy - 35); ctx.lineTo(cx + 35, cy + 35);
+        ctx.moveTo(cx + 35, cy - 35); ctx.lineTo(cx - 35, cy + 35);
+        ctx.stroke();
+      } else if (['a2', 'a12'].includes(id)) {
+        // درع أسطوري ثلاثي الأبعاد
+        ctx.fillStyle = '#0f2738';
+        ctx.strokeStyle = '#3498db';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 40); ctx.lineTo(cx + 38, cy - 20);
+        ctx.lineTo(cx + 28, cy + 35); ctx.lineTo(cx, cy + 50);
+        ctx.lineTo(cx - 28, cy + 35); ctx.lineTo(cx - 38, cy - 20);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+      } else if (['a3', 'a4'].includes(id)) {
+        // سيف أو مطرقة حارقة تخترق الصفائح
+        ctx.fillStyle = '#e67e22';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 50); ctx.lineTo(cx + 12, cy + 20);
+        ctx.lineTo(cx - 12, cy + 20); ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#d4af37';
+        ctx.fillRect(cx - 22, cy + 20, 44, 7);
+        ctx.fillRect(cx - 5, cy + 27, 10, 25);
+      } else if (id === 'a5') {
+        // دوامة سرقة الطاقة الفراغية
+        ctx.strokeStyle = '#9b59b6';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 32, 0, Math.PI * 1.5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, Math.PI, Math.PI * 2.5);
+        ctx.stroke();
+        ctx.fillStyle = '#f1c40f';
+        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
+      } else if (id === 'a6') {
+        // قفل وسلاسل منع الدفاع
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(cx - 24, cy - 10, 48, 42);
+        ctx.strokeStyle = '#e74c3c';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 10, 18, Math.PI, 0);
+        ctx.stroke();
+      } else if (['a7', 'a8'].includes(id)) {
+        // شمس استعادة الطاقة أو حلقة عكس الاتجاه
+        ctx.fillStyle = '#2ecc71';
+        ctx.beginPath();
+        for (let i = 0; i < 8; i++) {
+          const a = (i * Math.PI) / 4;
+          const r = (i % 2 === 0) ? 42 : 24;
+          ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+        }
+        ctx.closePath(); ctx.fill();
+      } else if (['a9', 'a11'].includes(id)) {
+        // ساعة رملية أسطورية للدور المضاعف والتخطي
+        ctx.fillStyle = '#f39c12';
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx - 24, cy - 40); ctx.lineTo(cx + 24, cy - 40);
+        ctx.lineTo(cx - 24, cy + 40); ctx.lineTo(cx + 24, cy + 40);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+      } else {
+        // كروت تبادل البطاقات
+        ctx.fillStyle = '#d4af37';
+        ctx.fillRect(cx - 30, cy - 25, 28, 42);
+        ctx.fillStyle = '#fae48c';
+        ctx.fillRect(cx + 2, cy - 18, 28, 42);
+      }
+
+      ctx.restore();
+    }
+
+    // استدعاء رسم جميع الكروت الموجودة في الصفحة
+    function renderAllCardCanvases() {
+      document.querySelectorAll('canvas[data-card]').forEach(cvs => {
+        const cId = cvs.getAttribute('data-card');
+        drawCardArt(cvs, cId);
+      });
+    }
 
     const CHARACTERS = [
       { id: 'c1', name: 'الفارس الحديدي', atk: 4, def: 5, desc: 'عند الدفاع، يخفض هجوم الخصم بنقطتين.', tier: 'متوسطة' },
@@ -509,7 +750,7 @@
           el.className = 'card';
           el.innerHTML = `
             <div class="card-name">${c.name}</div>
-            <div class="card-art-frame"><img src="${FANTASY_IMAGES[c.id]}" alt="${c.name}"></div>
+            <div class="card-art-frame"><canvas class="card-art-canvas" width="240" height="190" data-card="${c.id}"></canvas></div>
             ${c.atk ? `<div class="stats"><span class="stat-atk">⚔️ ${toAr(c.atk)}</span><span class="stat-def">🛡️ ${toAr(c.def)}</span></div>` : ''}
             <div class="desc">${c.desc}</div>
             <div class="tier">${c.tier}</div>
@@ -517,6 +758,7 @@
           box.appendChild(el);
         });
         document.getElementById('modal-gallery').classList.add('active');
+        renderAllCardCanvases();
       },
 
       showLocalSetup() {
@@ -767,6 +1009,7 @@
 
         document.getElementById('btn-end-turn').disabled = !isMyTurn || !!this.pendingAttack;
 
+        // قائمة اللاعبين
         const pList = document.getElementById('players-list');
         pList.innerHTML = '';
         s.players.forEach(p => {
@@ -799,6 +1042,7 @@
           pList.appendChild(el);
         });
 
+        // اليد المعروضة
         let activeHandPlayerId = curPlayer.id;
         if (this.mode === 'local' && this.pendingAttack) {
           activeHandPlayerId = this.pendingAttack.targetId;
@@ -840,7 +1084,7 @@
 
           el.innerHTML = `
             <div class="card-name">${card.name}</div>
-            <div class="card-art-frame"><img src="${FANTASY_IMAGES[card.id]}" alt="${card.name}"></div>
+            <div class="card-art-frame"><canvas class="card-art-canvas" width="240" height="190" data-card="${card.id}"></canvas></div>
             ${card.isChar ? `<div class="stats"><span class="stat-atk">⚔️ ${toAr(card.atk)}</span><span class="stat-def">🛡️ ${toAr(card.def)}</span></div>` : ''}
             <div class="desc">${card.desc}</div>
             <div class="tier">${card.tier}</div>
@@ -870,6 +1114,9 @@
           document.getElementById('win-name').textContent = `فاز ${alive[0].name}!`;
           document.getElementById('modal-win').classList.add('active');
         }
+
+        // رسم كافة اللوحات الفنية على الكانفاس
+        renderAllCardCanvases();
       },
 
       renderActions(curPlayer, isMyTurn, hand, selChar, selActs) {
