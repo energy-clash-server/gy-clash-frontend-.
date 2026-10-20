@@ -100,7 +100,6 @@
     .desc { font-size: 0.7rem; color: var(--muted); min-height: 40px; line-height: 1.3; }
     .tier { font-size: 0.65rem; color: var(--gold); text-align: center; border-top: 1px solid #22222e; padding-top: 2px; }
 
-    /* مسرح كشف الهجوم */
     .clash-stage-box {
       display: flex; justify-content: space-around; align-items: stretch;
       background: #09090e; border: 1px solid var(--gold); border-radius: 10px;
@@ -128,7 +127,7 @@
     .modal.active { display: flex; }
     .modal-box {
       background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
-      width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 18px;
+      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 18px;
       display: flex; flex-direction: column; gap: 10px;
     }
   </style>
@@ -269,16 +268,31 @@
     </div>
   </div>
 
-  <!-- القواعد -->
+  <!-- القواعد مع شرح حسبة الهجوم بالتفصيل -->
   <div id="modal-rules" class="modal">
-    <div class="modal-box">
-      <h3 style="color: var(--gold-light);">طريقة اللعب والقواعد</h3>
-      <div style="font-size: 0.85rem; line-height: 1.8; color: #ddd;">
-        <p>• <b>البداية:</b> تبدأ بـ ١٥ طاقة، و٥ بطاقات، وتتجدد يدك ببداية دورك حتى ٦ بطاقات.</p>
-        <p>• <b>الهجوم:</b> مقاتل + أكشن اختياري، أو أكشن عام لحاله.</p>
-        <p>• <b>الدفاع والتوقع:</b> المدافع لا يرى ورقة المهاجم إطلاقاً؛ تظهر كرت مقلوب ❓ وعليه توقع قوتها واختيار دفاعه.</p>
-        <p>• <b>تفعيل الأكشن:</b> جميع كروت الأكشن تتفعل وتطبق تأثيراتها في الحسبة مباشرة وتظهر في تقرير المعركة.</p>
-        <p>• <b>منع التجمع:</b> أقصى حد هجومان على نفس اللاعب بالجولة الواحدة.</p>
+    <div class="modal-box" style="max-width: 520px;">
+      <h3 style="color: var(--gold-light);">طريقة اللعب وقواعد المعركة</h3>
+      <div style="font-size: 0.85rem; line-height: 1.8; color: #ddd; display: flex; flex-direction: column; gap: 8px;">
+        <p>• <b>البداية واليد:</b> تبدأ بـ ١٥ طاقة و٥ بطاقات، وتتجدد يدك ببداية دورك تلقائياً حتى ٦ بطاقات إن توفرت في الكومة.</p>
+        <p>• <b>خيارات الهجوم:</b> يمكنك شن هجوم بـ (مقاتل + كرت أكشن مساند اختياري)، أو لعب بطاقة أكشن عامة بمفردها.</p>
+        <p>• <b>الدفاع والتوقع:</b> المدافع لا يرى ورقة المهاجم إطلاقاً؛ تظهر كرت مقلوب ❓ وعليه توقع قوتها واختيار مقاتله وأكشَنه الدفاعي (أو يدافع بأكشن فقط إذا لم يملك مقاتلاً).</p>
+        
+        <div style="background: #0d0d16; border: 1px solid var(--gold); border-radius: 8px; padding: 10px; margin: 4px 0;">
+          <b style="color: var(--gold-light); font-size: 0.95rem; display: block; margin-bottom: 4px;">⚔️ معادلة حسبة الهجوم والضرر:</b>
+          <div style="color: #fae48c; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px;">
+            الضرر النهائي = (الهجوم الإجمالي) − (الدفاع الفعّال)
+          </div>
+          <ul style="padding-right: 18px; font-size: 0.8rem; color: #ccc; line-height: 1.6;">
+            <li><b>الهجوم الإجمالي:</b> قوة هجوم المقاتل الأساسية + إضافات كروت الأكشن (مثل تعزيز الهجوم +٢) + قدرات المقاتل الهجومية الخاصة.</li>
+            <li><b>الدفاع الفعّال:</b> قوة دفاع المقاتل (أو ٠ إذا دافعت بأكشن فقط) − نقاط اختراق الدفاع (مثل كسر الدفاع) + امتصاص الضرر من الأكشن (مثل الدرع الواقي يمتص ٢ ضرر).</li>
+            <li><b>تطبيق الضرر:</b> يخصم الناتج مباشرة من طاقة المدافع (إذا كان الدفاع مساوياً أو أكبر من الهجوم يصبح الضرر صفراً).</li>
+            <li><b>التأثيرات اللاحقة:</b> بعد الضرر تتفعل قدرات المقاتلين مثل «مصاص الطاقة» (+١ طاقة)، أو «صاعق البرق» (رد ٢ ضرر للمهاجم إذا كان الضرر نقطتين أو أقل).</li>
+            <li><b>الإلغاء:</b> كرت «منع الدفاع» يلغي أكشن المدافع، وكرت «رفض الأكشن» يلغي أكشن المهاجم تماماً قبل الحسبة!</li>
+          </ul>
+        </div>
+
+        <p>• <b>منع التجمع:</b> أقصى حد هجومان يتلقاهما نفس اللاعب خلال الجولة الواحدة لحمايته من التكتل.</p>
+        <p>• <b>انتقال الدور:</b> بعد أي هجوم ومهما كانت النتيجة، ينتقل الدور تلقائياً للاعب التالي مباشرة وتتجدد بطاقاته.</p>
       </div>
       <button class="btn btn-sec" onclick="Game.closeModals()">فهمت ذلك</button>
     </div>
@@ -640,7 +654,6 @@
 
         document.getElementById('btn-end-turn').disabled = !isMyTurn || !!this.pendingAttack;
 
-        // قائمة اللاعبين
         const pList = document.getElementById('players-list');
         pList.innerHTML = '';
         s.players.forEach(p => {
@@ -673,7 +686,6 @@
           pList.appendChild(el);
         });
 
-        // اليد المعروضة
         let activeHandPlayerId = curPlayer.id;
         if (this.mode === 'local' && this.pendingAttack) {
           activeHandPlayerId = this.pendingAttack.targetId;
@@ -711,7 +723,6 @@
           hList.appendChild(el);
         });
 
-        // تحديث ملخص الكروت المختارة
         const summaryBox = document.getElementById('selection-summary');
         const selChar = hand.find(c => c.uid === this.selCharUid);
         const selAct = hand.find(c => c.uid === this.selActUid);
@@ -741,7 +752,6 @@
         const box = document.getElementById('action-buttons-box');
         box.innerHTML = '';
 
-        // ١. المدافع يرد على الهجوم السري
         if (this.pendingAttack) {
           const isDefender = (this.mode === 'local') ? true : (this.pendingAttack.targetId === this.myId);
           if (isDefender) {
@@ -767,7 +777,6 @@
           return;
         }
 
-        // ٢. دور المهاجم
         if (!isMyTurn) {
           hint.textContent = 'ليس دورك الآن، انتظر حتى ينتهي الخصم من حركته...';
           return;
@@ -873,7 +882,6 @@
         }
       },
 
-      // احتساب نتيجة المعركة وتفعيل جميع كروت الأكشن
       resolveClash(defense) {
         const atk = this.pendingAttack;
         const def = defense;
@@ -881,7 +889,6 @@
         const attacker = this.state.players.find(p => p.id === atk.attackerId);
         const defender = this.state.players.find(p => p.id === atk.targetId);
 
-        // استهلاك كروت المهاجم
         const atkHand = this.state.hands[attacker.id];
         const atkChar = atkHand.splice(atkHand.findIndex(c => c.uid === atk.charUid), 1)[0];
         this.state.disc.push(atkChar);
@@ -895,7 +902,6 @@
           }
         }
 
-        // استهلاك كروت المدافع
         const defHand = this.state.hands[defender.id];
         let defChar = null;
         if (def.charUid) {
@@ -915,18 +921,15 @@
           }
         }
 
-        // ١. فحص الإلغاءات المتبادلة
         let atkActionBlocked = false;
         let defActionBlocked = false;
         let actionLogs = [];
 
-        // منع الدفاع يلغي كرت دفاع المدافع
         if (atkAct && atkAct.id === 'a6') {
           defActionBlocked = true;
           actionLogs.push(`🚫 «منع الدفاع»: تم تعطيل وإلغاء بطاقة الأكشن الدفاعية للمدافع!`);
         }
 
-        // رفض الأكشن يلغي كرت هجوم المهاجم
         if (defAct && defAct.id === 'a1') {
           if (!defActionBlocked) {
             atkActionBlocked = true;
@@ -934,7 +937,6 @@
           }
         }
 
-        // ٢. تطبيق أكشن المهاجم
         let bonusAtk = 0;
         let pierce = 0;
 
@@ -969,7 +971,6 @@
           }
         }
 
-        // ٣. تطبيق أكشن المدافع
         let dmgReduction = 0;
 
         if (defAct && !defActionBlocked) {
@@ -982,7 +983,6 @@
           }
         }
 
-        // ٤. قدرات الشخصيات
         let baseAtk = atkChar.atk;
         if (atkChar.id === 'c7' && attacker.energy <= 5) { bonusAtk += 1; actionLogs.push(`🔥 قدرة «المحارب الهائج»: +١ هجوم إضافي.`); }
         if (atkChar.id === 'c10' && defender.energy > attacker.energy) { bonusAtk += 2; actionLogs.push(`🦅 قدرة «الصقر»: +٢ هجوم لأن طاقة الخصم أعلى.`); }
@@ -1007,7 +1007,6 @@
           actionLogs.push(`🛡️ الحماية المؤقتة المسبقة للمدافع امتصت نقطتي ضرر.`);
         }
 
-        // ٥. حساب الضرر النهائي
         let finalDamage = Math.max(0, (totalAtk - effectiveDef) - dmgReduction);
         if (atkChar.id === 'c2' && finalDamage > 0) {
           finalDamage += 1;
@@ -1052,7 +1051,6 @@
         this.state.logs.unshift(`نتيجة الهجوم: تسبب ${attacker.name} بـ ${toAr(finalDamage)} ضرر على ${defender.name}.`);
         this.pendingAttack = null;
 
-        // انتقال الدور تلقائياً للاعب التالي
         this.advanceTurn();
 
         if (this.mode === 'local') {
