@@ -60,7 +60,7 @@
     .badge { background: #181822; border: 1px solid #313142; padding: 3px 8px; border-radius: 6px; color: var(--gold-light); font-size: 0.8rem; }
     .badge b { color: #fff; }
 
-    .field { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 1300px; width: 100%; margin: 0 auto; }
+    .field { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 1350px; width: 100%; margin: 0 auto; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
     .p-card {
       background: #13131a; border: 1px solid #262633; border-radius: 8px; padding: 8px 10px;
@@ -79,7 +79,6 @@
     .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
     .log-row { padding: 3px 6px; background: #14141e; border-radius: 4px; border-right: 3px solid var(--gold); }
 
-    /* دليل الخطوات المباشر داخل الساحة */
     .game-steps-guide {
       background: #14141f; border: 1px solid #2d2d40; border-radius: 6px;
       padding: 6px 10px; width: 100%; font-size: 0.78rem; color: #ccc;
@@ -97,7 +96,7 @@
     .hand { background: #0f0f14; border-top: 1px solid var(--border); padding: 10px; margin-top: auto; }
     .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
     .card {
-      min-width: 145px; max-width: 155px; background: #171722; border: 1px solid #333342;
+      min-width: 150px; max-width: 160px; background: #171722; border: 1px solid #333342;
       border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: 0.2s;
     }
     .card:hover { transform: translateY(-4px); border-color: var(--gold); }
@@ -105,13 +104,13 @@
     .card.sel-act { border-color: #6bb3ff; background: #111a26; transform: translateY(-6px); box-shadow: 0 0 10px rgba(107,179,255,0.4); }
     .card-name { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
     
-    /* صندوق رسمة البطاقة */
+    /* إطار الرسمة الطولي الموسع للأجساد الكاملة */
     .card-art-frame {
-      width: 100%; height: 75px; background: #09090e; border-radius: 6px;
-      border: 1px solid #252536; display: flex; align-items: center; justify-content: center;
-      margin: 2px 0; overflow: hidden;
+      width: 100%; height: 115px; background: #08080d; border-radius: 6px;
+      border: 1px solid #232334; display: flex; align-items: center; justify-content: center;
+      margin: 2px 0; overflow: hidden; position: relative;
     }
-    .card-art-frame svg { width: 60px; height: 60px; }
+    .card-art-frame svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.9)); }
 
     .stats { display: flex; justify-content: space-around; background: #0c0c10; padding: 2px 0; border-radius: 4px; font-weight: 800; font-size: 0.75rem; }
     .desc { font-size: 0.68rem; color: var(--muted); min-height: 38px; line-height: 1.3; text-align: center; }
@@ -295,7 +294,7 @@
     </div>
   </div>
 
-  <!-- القواعد مع شرح طريقة حط الورقة وحسبة الهجوم -->
+  <!-- القواعد -->
   <div id="modal-rules" class="modal">
     <div class="modal-box" style="max-width: 520px;">
       <h3 style="color: var(--gold-light);">طريقة اللعب وقواعد المعركة</h3>
@@ -348,47 +347,84 @@
       return n.toString().replace(/[0-9]/g, d => ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
     }
 
-    // مكتبة رسومات أصلية ومميزة بدون أي ملامح بشرية مكشوفة أو فتيات
-    // تعتمد بالكامل على خوذ حربية، أقنعة حديدية، أردية مظلمة، وحوش، ودروع وأسلحة خيالية
+    // مكتبة رسومات أصلية وكاملة الأجساد (Full-Body Fantasy)
+    // جميع الشخصيات بخوذ حربية كاملة، أردية مظلمة، وحوش، ودروع وأسلحة، بدون ملامح بشرية مكشوفة ولا فتيات
     const ART = {
-      // مقاتلون
-      c1: `<svg viewBox="0 0 60 60"><path d="M15 15 L45 15 L40 45 L30 52 L20 45 Z" fill="#2d323f" stroke="#d4af37" stroke-width="2"/><rect x="22" y="26" width="16" height="3" fill="#fbe58a"/><path d="M10 12 L18 20 M50 12 L42 20" stroke="#d4af37" stroke-width="2"/></svg>`, // الفارس الحديدي
-      c2: `<svg viewBox="0 0 60 60"><path d="M30 10 Q45 25 40 40 Q45 35 48 50 Q30 55 12 50 Q15 35 20 40 Q15 25 30 10 Z" fill="#7a1818" stroke="#f39c12" stroke-width="2"/><circle cx="30" cy="35" r="5" fill="#f1c40f"/></svg>`, // التنين المحترق
-      c3: `<svg viewBox="0 0 60 60"><path d="M18 18 Q30 8 42 18 L40 46 Q30 54 20 46 Z" fill="#14141c" stroke="#444" stroke-width="2"/><ellipse cx="25" cy="30" rx="3" ry="1.5" fill="#f1c40f"/><ellipse cx="35" cy="30" rx="3" ry="1.5" fill="#f1c40f"/></svg>`, // قاتل الظلال
-      c4: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="#101828" stroke="#3498db" stroke-width="2"/><polygon points="32,12 18,34 29,34 27,48 44,26 33,26" fill="#f1c40f"/></svg>`, // صاعق البرق
-      c5: `<svg viewBox="0 0 60 60"><path d="M30 12 L48 24 L42 48 L30 54 L18 48 L12 24 Z" fill="#242014" stroke="#d4af37" stroke-width="2"/><circle cx="30" cy="32" r="7" fill="#fbe58a"/></svg>`, // فارس النور
-      c6: `<svg viewBox="0 0 60 60"><polygon points="30,10 36,24 50,30 36,36 30,50 24,36 10,30 24,24" fill="#1c3b52" stroke="#5dade2" stroke-width="2"/><circle cx="30" cy="30" r="4" fill="#ebf5fb"/></svg>`, // ساحر الجليد
-      c7: `<svg viewBox="0 0 60 60"><path d="M14 20 L30 32 L46 20 L50 44 L30 54 L10 44 Z" fill="#3d1418" stroke="#c0392b" stroke-width="2"/><path d="M22 30 L38 30 L30 42 Z" fill="#e74c3c"/></svg>`, // المحارب الهائج
-      c8: `<svg viewBox="0 0 60 60"><polygon points="30,12 48,24 42,48 18,48 12,24" fill="#0e2a2a" stroke="#1abc9c" stroke-width="2"/><polygon points="30,20 40,28 36,42 24,42 20,28" fill="#16a085"/></svg>`, // حارس الكريستال
-      c9: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#23132e" stroke="#8e44ad" stroke-width="2"/><circle cx="30" cy="30" r="10" fill="#4a235a"/><circle cx="30" cy="30" r="3" fill="#d4af37"/></svg>`, // مصاص الطاقة
-      c10: `<svg viewBox="0 0 60 60"><path d="M12 26 Q30 14 48 26 Q30 46 12 26 Z" fill="#301f11" stroke="#e67e22" stroke-width="2"/><polygon points="30,24 36,38 30,34 24,38" fill="#f39c12"/></svg>`, // الصقر
-      c11: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#222" stroke="#7f8c8d" stroke-width="2"/><path d="M22 28 Q30 20 38 28 M24 38 Q30 32 36 38" stroke="#e67e22" stroke-width="2" fill="none"/></svg>`, // حارس الرماد
-      c12: `<svg viewBox="0 0 60 60"><rect x="16" y="16" width="28" height="28" rx="4" fill="#151b24" stroke="#2980b9" stroke-width="2"/><rect x="20" y="24" width="20" height="4" fill="#d4af37"/></svg>`, // نينجا الرياح
-      c13: `<svg viewBox="0 0 60 60"><path d="M16 12 L44 12 L44 40 L30 52 L16 40 Z" fill="#2c3e50" stroke="#bdc3c7" stroke-width="2"/><rect x="28" y="18" width="4" height="24" fill="#bdc3c7"/></svg>`, // جندي الترس
-      c14: `<svg viewBox="0 0 60 60"><path d="M16 22 Q30 10 44 22 L40 48 Q30 52 20 48 Z" fill="#332412" stroke="#d35400" stroke-width="2"/><rect x="22" y="28" width="16" height="3" fill="#f39c12"/></svg>`, // سيد الرمال
-      c15: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#1b262c" stroke="#16a085" stroke-width="2"/><circle cx="24" cy="28" r="4" fill="#2ecc71"/><circle cx="36" cy="28" r="4" fill="#2ecc71"/></svg>`, // صياد الضباب
-      c16: `<svg viewBox="0 0 60 60"><polygon points="30,12 46,26 38,48 22,48 14,26" fill="#1e1e24" stroke="#e74c3c" stroke-width="2"/><circle cx="30" cy="30" r="5" fill="#e74c3c"/></svg>`, // قناص الأطلال
-      c17: `<svg viewBox="0 0 60 60"><ellipse cx="30" cy="30" rx="16" ry="22" fill="#1f1f28" stroke="#7f8c8d" stroke-width="2"/><line x1="30" y1="16" x2="30" y2="44" stroke="#bdc3c7" stroke-width="2"/></svg>`, // الفارس الصامت
-      c18: `<svg viewBox="0 0 60 60"><path d="M18 16 Q30 8 42 16 L40 46 Q30 52 20 46 Z" fill="#2e271a" stroke="#8e44ad" stroke-width="2"/><line x1="30" y1="20" x2="30" y2="40" stroke="#d4af37" stroke-width="2"/></svg>`, // رامي السهام
-      c19: `<svg viewBox="0 0 60 60"><rect x="16" y="14" width="28" height="34" fill="#1c1c1c" stroke="#95a5a6" stroke-width="2"/><line x1="16" y1="24" x2="44" y2="24" stroke="#95a5a6" stroke-width="2"/><line x1="16" y1="36" x2="44" y2="36" stroke="#95a5a6" stroke-width="2"/><line x1="30" y1="14" x2="30" y2="48" stroke="#95a5a6" stroke-width="2"/></svg>`, // حارس البوابة
-      c20: `<svg viewBox="0 0 60 60"><polygon points="30,14 44,24 38,46 22,46 16,24" fill="#1a1c13" stroke="#27ae60" stroke-width="2"/><polygon points="26,34 30,40 34,34" fill="#2ecc71"/></svg>`, // متصيد الكهوف
+      // ١. الفارس الحديدي: مدرع بالكامل بخوذة قرنية ودرع صلب وسيف عريض وترس
+      c1: `<svg viewBox="0 0 80 110"><path d="M30 10 L50 10 L46 30 L40 34 L34 30 Z" fill="#3a4150" stroke="#d4af37" stroke-width="1.5"/><rect x="36" y="20" width="8" height="2" fill="#fae48c"/><path d="M22 6 L32 14 M58 6 L48 14" stroke="#d4af37" stroke-width="2"/><path d="M26 34 L54 34 L50 64 L40 70 L30 64 Z" fill="#2d323f" stroke="#7f8c8d"/><path d="M14 36 L24 40 L20 62 L12 45 Z" fill="#20242e"/><line x1="12" y1="30" x2="12" y2="76" stroke="#fae48c" stroke-width="2.5"/><path d="M56 38 L68 44 L64 68 L54 64 Z" fill="#1b2028" stroke="#d4af37"/><path d="M30 70 L38 70 L36 98 L28 98 Z" fill="#222"/><path d="M42 70 L50 70 L52 98 L44 98 Z" fill="#222"/></svg>`,
       
-      // بطاقات أكشن
-      a1: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#241316" stroke="#e74c3c" stroke-width="2"/><line x1="18" y1="18" x2="42" y2="42" stroke="#e74c3c" stroke-width="4"/><line x1="42" y1="18" x2="18" y2="42" stroke="#e74c3c" stroke-width="4"/></svg>`, // رفض الأكشن
-      a2: `<svg viewBox="0 0 60 60"><path d="M30 14 L46 22 L42 42 L30 50 L18 42 L14 22 Z" fill="#142634" stroke="#3498db" stroke-width="2"/><circle cx="30" cy="32" r="6" fill="#5dade2"/></svg>`, // الدرع الواقي
-      a3: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#301512" stroke="#e67e22" stroke-width="2"/><path d="M22 38 L38 22 M34 18 L42 26" stroke="#e74c3c" stroke-width="3"/></svg>`, // تعزيز الهجوم
-      a4: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2c1a0e" stroke="#d35400" stroke-width="2"/><polygon points="30,14 36,36 30,32 24,36" fill="#e67e22"/></svg>`, // كسر الدفاع
-      a5: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#23132e" stroke="#8e44ad" stroke-width="2"/><path d="M20 30 Q30 16 40 30 Q30 44 20 30" fill="#9b59b6"/></svg>`, // سرقة الطاقة
-      a6: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#221215" stroke="#c0392b" stroke-width="2"/><rect x="22" y="24" width="16" height="14" rx="2" fill="#e74c3c"/><path d="M25 24 L25 18 Q30 14 35 18 L35 24" fill="none" stroke="#e74c3c" stroke-width="2"/></svg>`, // منع الدفاع
-      a7: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#12261a" stroke="#2ecc71" stroke-width="2"/><polygon points="30,16 34,26 44,26 36,32 39,42 30,36 21,42 24,32 16,26 26,26" fill="#27ae60"/></svg>`, // استعادة الطاقة
-      a8: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#252514" stroke="#f1c40f" stroke-width="2"/><path d="M20 30 A10 10 0 1 1 30 40 L30 46 L38 38 L30 30 L30 36 A6 6 0 1 0 24 30 Z" fill="#f39c12"/></svg>`, // عكس الاتجاه
-      a9: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#201326" stroke="#9b59b6" stroke-width="2"/><rect x="22" y="18" width="5" height="24" fill="#8e44ad"/><rect x="33" y="18" width="5" height="24" fill="#8e44ad"/></svg>`, // إيقاف اللاعب
-      a10: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2b2011" stroke="#d4af37" stroke-width="2"/><rect x="18" y="22" width="12" height="18" rx="2" fill="#f39c12"/><rect x="30" y="20" width="12" height="18" rx="2" fill="#d4af37"/></svg>`, // تبادل البطاقات
-      a11: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2d2410" stroke="#f1c40f" stroke-width="2"/><path d="M22 30 A8 8 0 0 1 30 22 A8 8 0 0 1 38 30 A8 8 0 0 1 30 38 A8 8 0 0 1 22 30" fill="none" stroke="#f39c12" stroke-width="3"/><path d="M30 30 A8 8 0 0 1 38 22 A8 8 0 0 1 46 30 A8 8 0 0 1 38 38 A8 8 0 0 1 30 30" fill="none" stroke="#f1c40f" stroke-width="3"/></svg>`, // الدور المضاعف
-      a12: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#132630" stroke="#00cec9" stroke-width="2"/><polygon points="30,16 42,22 42,34 30,44 18,34 18,22" fill="#81ecec"/></svg>` // الحماية المؤقتة
+      // ٢. التنين المحترق: كائن وحشي محترق بأجنحة نارية وقرون ومخالب
+      c2: `<svg viewBox="0 0 80 110"><path d="M10 24 Q24 16 36 32 Q16 46 10 24 Z" fill="#962d18"/><path d="M70 24 Q56 16 44 32 Q64 46 70 24 Z" fill="#962d18"/><path d="M34 14 Q40 6 46 14 L44 32 L36 32 Z" fill="#c0392b" stroke="#e67e22"/><circle cx="37" cy="22" r="1.5" fill="#f1c40f"/><circle cx="43" cy="22" r="1.5" fill="#f1c40f"/><path d="M30 32 L50 32 L46 66 L34 66 Z" fill="#781e14"/><path d="M24 38 L32 46 L26 64 Z" fill="#962d18"/><path d="M56 38 L48 46 L54 64 Z" fill="#962d18"/><path d="M32 66 L36 94 L30 96 Z" fill="#50120c"/><path d="M48 66 L44 94 L50 96 Z" fill="#50120c"/><path d="M46 66 Q62 76 66 92" stroke="#e67e22" stroke-width="3" fill="none"/></svg>`,
+
+      // ٣. قاتل الظلال: رداء مظلم كامل، قناع أسود بأعين ليزرية صفراء، خنجران منحنيان
+      c3: `<svg viewBox="0 0 80 110"><path d="M28 12 Q40 4 52 12 L50 34 L30 34 Z" fill="#14141c" stroke="#4a4a5a"/><ellipse cx="36" cy="22" rx="2.5" ry="1" fill="#f1c40f"/><ellipse cx="44" cy="22" rx="2.5" ry="1" fill="#f1c40f"/><path d="M24 34 L56 34 L62 82 L18 82 Z" fill="#0d0d12" stroke="#333"/><line x1="16" y1="46" x2="10" y2="72" stroke="#bdc3c7" stroke-width="2"/><line x1="64" y1="46" x2="70" y2="72" stroke="#bdc3c7" stroke-width="2"/><path d="M30 82 L38 82 L36 100 L28 100 Z" fill="#111"/><path d="M42 82 L50 82 L52 100 L44 100 Z" fill="#111"/></svg>`,
+
+      // ٤. صاعق البرق: درع صاعق بخوذة مجنحة ورمح برق وترس كهربائي
+      c4: `<svg viewBox="0 0 80 110"><path d="M32 10 L48 10 L45 28 L35 28 Z" fill="#17263c" stroke="#3498db"/><polygon points="26,6 34,14 28,18" fill="#f1c40f"/><polygon points="54,6 46,14 52,18" fill="#f1c40f"/><path d="M28 28 L52 28 L48 64 L32 64 Z" fill="#1d3557"/><line x1="14" y1="12" x2="18" y2="84" stroke="#f1c40f" stroke-width="2.5"/><polygon points="14,12 18,2 22,12 18,18" fill="#f1c40f"/><path d="M52 38 L64 42 L60 62 L48 58 Z" fill="#0f1b29" stroke="#3498db"/><path d="M32 64 L38 64 L36 98 L30 98 Z" fill="#111"/><path d="M42 64 L48 64 L50 98 L44 98 Z" fill="#111"/></svg>`,
+
+      // ٥. فارس النور: درع شمسي ذهبي مغلق، شارة شمس في الصدر، وسيف ضوئي
+      c5: `<svg viewBox="0 0 80 110"><circle cx="40" cy="18" r="10" fill="#242012" stroke="#d4af37" stroke-width="2"/><circle cx="40" cy="18" r="3" fill="#fbe58a"/><path d="M26 30 L54 30 L50 64 L30 64 Z" fill="#383018" stroke="#d4af37"/><circle cx="40" cy="44" r="6" fill="#fbe58a"/><line x1="66" y1="20" x2="66" y2="76" stroke="#fbe58a" stroke-width="2.5"/><path d="M14 36 L26 40 L22 64 L12 56 Z" fill="#242012" stroke="#d4af37"/><path d="M30 64 L38 64 L36 98 L28 98 Z" fill="#221e10"/><path d="M42 64 L50 64 L52 98 L44 98 Z" fill="#221e10"/></svg>`,
+
+      // ٦. ساحر الجليد: تاج بلوري صلد، رداء شتوي مطرز، وعصا جليد كروية
+      c6: `<svg viewBox="0 0 80 110"><polygon points="34,8 40,2 46,8 48,24 32,24" fill="#1b3a4b" stroke="#5dade2"/><circle cx="40" cy="18" r="2.5" fill="#ebf5fb"/><path d="M24 26 L56 26 L62 86 L18 86 Z" fill="#102533" stroke="#2980b9"/><line x1="68" y1="18" x2="68" y2="92" stroke="#5dade2" stroke-width="2"/><circle cx="68" cy="16" r="5" fill="#ebf5fb"/><path d="M30 86 L38 86 L36 100 L28 100 Z" fill="#08141d"/><path d="M42 86 L50 86 L52 100 L44 100 Z" fill="#08141d"/></svg>`,
+
+      // ٧. المحارب الهائج: خوذة قرون ثقيلة، درع صدري مسنن، وفأس عملاق
+      c7: `<svg viewBox="0 0 80 110"><path d="M32 12 L48 12 L44 28 L36 28 Z" fill="#2b1416" stroke="#c0392b"/><path d="M22 6 Q28 12 34 14 M58 6 Q52 12 46 14" stroke="#c0392b" stroke-width="3"/><path d="M24 28 L56 28 L52 66 L28 66 Z" fill="#421a1d" stroke="#922b21"/><line x1="16" y1="20" x2="16" y2="82" stroke="#7f8c8d" stroke-width="3"/><path d="M8 20 L24 20 L24 36 L8 36 Z" fill="#922b21" stroke="#e74c3c"/><path d="M30 66 L38 66 L36 98 L28 98 Z" fill="#200d0e"/><path d="M42 66 L50 66 L52 98 L44 98 Z" fill="#200d0e"/></svg>`,
+
+      // ٨. حارس الكريستال: غولم صخري زمردي بجذع هندسي وأحجار طافية
+      c8: `<svg viewBox="0 0 80 110"><polygon points="40,8 48,18 40,26 32,18" fill="#16a085" stroke="#a3e4d7"/><polygon points="26,28 54,28 48,66 32,66" fill="#0e4438" stroke="#1abc9c"/><polygon points="40,36 46,48 40,58 34,48" fill="#a3e4d7"/><rect x="14" y="34" width="8" height="24" rx="2" fill="#16a085"/><rect x="58" y="34" width="8" height="24" rx="2" fill="#16a085"/><polygon points="30,66 38,66 36 98 26 98" fill="#0b2e26"/><polygon points="42,66 50,66 54 98 44 98" fill="#0b2e26"/></svg>`,
+
+      // ٩. مصاص الطاقة: هيكل عظمي مدرع بغطاء رأس مظلم ورمح امتصاص بنفسجي
+      c9: `<svg viewBox="0 0 80 110"><circle cx="40" cy="18" r="9" fill="#1a0f24" stroke="#8e44ad"/><circle cx="40" cy="18" r="4" fill="#000"/><circle cx="40" cy="18" r="1.5" fill="#f1c40f"/><path d="M26 30 L54 30 L58 78 L22 78 Z" fill="#271338" stroke="#8e44ad"/><line x1="68" y1="12" x2="68" y2="88" stroke="#9b59b6" stroke-width="2.5"/><circle cx="68" cy="12" r="6" fill="#8e44ad"/><path d="M30 78 L38 78 L36 98 L28 98 Z" fill="#110918"/><path d="M42 78 L50 78 L52 98 L44 98 Z" fill="#110918"/></svg>`,
+
+      // ١٠. الصقر: مقاتل الصقر المدرع بخوذة منقار ذهبي وريش معدني ونصال حادة
+      c10: `<svg viewBox="0 0 80 110"><path d="M34 10 L46 10 L50 20 L40 28 L30 20 Z" fill="#301f11" stroke="#d35400"/><polygon points="40,20 44,28 36,28" fill="#f39c12"/><path d="M26 28 L54 28 L48 64 L32 64 Z" fill="#4a301a" stroke="#e67e22"/><path d="M12 34 L26 38 L20 62 Z" fill="#301f11"/><path d="M68 34 L54 38 L60 62 Z" fill="#301f11"/><path d="M30 64 L38 64 L36 98 L28 98 Z" fill="#26170b"/><path d="M42 64 L50 64 L52 98 L44 98 Z" fill="#26170b"/></svg>`,
+
+      // ١١. حارس الرماد: درع بركاني متصدع يتوهج بالحمم
+      c11: `<svg viewBox="0 0 80 110"><circle cx="40" cy="18" r="9" fill="#222" stroke="#7f8c8d"/><path d="M35 18 L45 18" stroke="#e67e22" stroke-width="2"/><path d="M26 28 L54 28 L48 68 L32 68 Z" fill="#2c2c2c" stroke="#555"/><path d="M34 38 L42 46 L38 56" stroke="#d35400" stroke-width="2" fill="none"/><path d="M30 68 L38 68 L36 98 L28 98 Z" fill="#1a1a1a"/><path d="M42 68 L50 68 L52 98 L44 98 Z" fill="#1a1a1a"/></svg>`,
+
+      // ١٢. نينجا الرياح: مقاتل ظل ياباني بقناع ميمبو حديدي ووشاح رياح وسيف نينجا
+      c12: `<svg viewBox="0 0 80 110"><rect x="32" y="10" width="16" height="18" rx="3" fill="#151b24" stroke="#2980b9"/><rect x="34" y="18" width="12" height="3" fill="#d4af37"/><path d="M26 30 L54 30 L48 66 L32 66 Z" fill="#1a2530"/><line x1="22" y1="24" x2="64" y2="70" stroke="#bdc3c7" stroke-width="2"/><path d="M30 66 L38 66 L36 98 L28 98 Z" fill="#0f171e"/><path d="M42 66 L50 66 L52 98 L44 98 Z" fill="#0f171e"/></svg>`,
+
+      // ١٣. جندي الترس: محارب متراس يختبئ خلف درع برجي ضخم يغطي كامل الجسد
+      c13: `<svg viewBox="0 0 80 110"><rect x="34" y="8" width="12" height="14" fill="#34495e"/><rect x="36" y="14" width="8" height="2" fill="#bdc3c7"/><rect x="20" y="24" width="40" height="72" rx="4" fill="#2c3e50" stroke="#95a5a6" stroke-width="2"/><line x1="40" y1="24" x2="40" y2="96" stroke="#7f8c8d" stroke-width="2"/><line x1="68" y1="16" x2="68" y2="70" stroke="#f1c40f" stroke-width="2"/></svg>`,
+
+      // ١٤. سيد الرمال: قناع صحراوي حديدي مع وشاح رمال متحرك وخناجر معقوفة
+      c14: `<svg viewBox="0 0 80 110"><path d="M32 10 Q40 4 48 10 L46 28 L34 28 Z" fill="#382915" stroke="#d35400"/><rect x="36" y="18" width="8" height="2" fill="#f39c12"/><path d="M24 28 L56 28 L52 74 L28 74 Z" fill="#4d3a22"/><path d="M16 40 Q10 55 18 68" stroke="#d35400" stroke-width="3" fill="none"/><path d="M64 40 Q70 55 62 68" stroke="#d35400" stroke-width="3" fill="none"/><path d="M30 74 L38 74 L36 98 L28 98 Z" fill="#261b0c"/><path d="M42 74 L50 74 L52 98 L44 98 Z" fill="#261b0c"/></svg>`,
+
+      // ١٥. صياد الضباب: قناع مرشح ضباب حديدي وعينين خضراوين وقوس صيد
+      c15: `<svg viewBox="0 0 80 110"><circle cx="40" cy="18" r="9" fill="#1b262c" stroke="#16a085"/><circle cx="37" cy="16" r="2" fill="#2ecc71"/><circle cx="43" cy="16" r="2" fill="#2ecc71"/><rect x="38" y="21" width="4" height="5" fill="#555"/><path d="M26 28 L54 28 L48 68 L32 68 Z" fill="#1c313a"/><path d="M30 68 L38 68 L36 98 L28 98 Z" fill="#0d191e"/><path d="M42 68 L50 68 L52 98 L44 98 Z" fill="#0d191e"/></svg>`,
+
+      // ١٦. قناص الأطلال: رداء كشافة أثري مع منظار عيني أحمر وبندقية طويلة
+      c16: `<svg viewBox="0 0 80 110"><polygon points="40,8 48,16 44,26 36,26 32,16" fill="#2d2d38" stroke="#e74c3c"/><circle cx="40" cy="18" r="2.5" fill="#e74c3c"/><path d="M26 28 L54 28 L48 70 L32 70 Z" fill="#1e1e26"/><line x1="66" y1="14" x2="66" y2="84" stroke="#7f8c8d" stroke-width="2.5"/><path d="M30 70 L38 70 L36 98 L28 98 Z" fill="#121217"/><path d="M42 70 L50 70 L52 98 L44 98 Z" fill="#121217"/></svg>`,
+
+      // ١٧. الفارس الصامت: قناع مصمت من الكروم الداكن بلا أي فتحات مع سيف مبارزة
+      c17: `<svg viewBox="0 0 80 110"><ellipse cx="40" cy="18" rx="8" ry="11" fill="#1a1a24" stroke="#95a5a6" stroke-width="1.5"/><path d="M26 30 L54 30 L50 66 L30 66 Z" fill="#232330" stroke="#7f8c8d"/><line x1="64" y1="18" x2="64" y2="86" stroke="#bdc3c7" stroke-width="1.5"/><path d="M30 66 L38 66 L36 98 L28 98 Z" fill="#111118"/><path d="M42 66 L50 66 L52 98 L44 98 Z" fill="#111118"/></svg>`,
+
+      // ١٨. رامي السهام: درع جلدي صياد وقوس مشدود
+      c18: `<svg viewBox="0 0 80 110"><path d="M32 10 Q40 4 48 10 L44 26 L36 26 Z" fill="#2c2214" stroke="#8e44ad"/><path d="M26 28 L54 28 L48 68 L32 68 Z" fill="#3b2f1c"/><path d="M14 24 Q6 46 14 68" stroke="#d4af37" stroke-width="2" fill="none"/><line x1="14" y1="46" x2="30" y2="46" stroke="#bdc3c7" stroke-width="2"/><path d="M30 68 L38 68 L36 98 L28 98 Z" fill="#1c160b"/><path d="M42 68 L50 68 L52 98 L44 98 Z" fill="#1c160b"/></svg>`,
+
+      // ١٩. حارس البوابة: درع فولاذي هائل كبوابة القلعة مع قضبان حديدية
+      c19: `<svg viewBox="0 0 80 110"><rect x="32" y="8" width="16" height="18" fill="#1b1b1b" stroke="#95a5a6" stroke-width="2"/><line x1="32" y1="16" x2="48" y2="16" stroke="#95a5a6"/><line x1="40" y1="8" x2="40" y2="26" stroke="#95a5a6"/><path d="M20 28 L60 28 L54 72 L26 72 Z" fill="#2a2a2a" stroke="#7f8c8d" stroke-width="2"/><line x1="20" y1="48" x2="60" y2="48" stroke="#7f8c8d" stroke-width="2"/><path d="M28 72 L36 72 L34 98 L26 98 Z" fill="#141414"/><path d="M44 72 L52 72 L54 98 L46 98 Z" fill="#141414"/></svg>`,
+
+      // ٢٠. متصيد الكهوف: كائن درعي زاحف بمخالب حجرية وخوذة قرنية
+      c20: `<svg viewBox="0 0 80 110"><polygon points="40,8 50,18 44,28 36,28 30,18" fill="#1a1c12" stroke="#27ae60"/><circle cx="36" cy="18" r="1.5" fill="#2ecc71"/><circle cx="44" cy="18" r="1.5" fill="#2ecc71"/><path d="M26 28 L54 28 L46 68 L34 68 Z" fill="#282b1c" stroke="#27ae60"/><path d="M18 36 L26 44 L16 64 Z" fill="#1a1c12"/><path d="M62 36 L54 44 L64 64 Z" fill="#1a1c12"/><path d="M30 68 L38 68 L36 98 L28 98 Z" fill="#10120b"/><path d="M42 68 L50 68 L52 98 L44 98 Z" fill="#10120b"/></svg>`,
+
+      // بطاقات الأكشن (أسلحة ورموز ثلاثية الأبعاد)
+      a1: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="28" fill="#261215" stroke="#e74c3c" stroke-width="3"/><line x1="22" y1="27" x2="58" y2="63" stroke="#e74c3c" stroke-width="5"/><line x1="58" y1="27" x2="22" y2="63" stroke="#e74c3c" stroke-width="5"/></svg>`,
+      a2: `<svg viewBox="0 0 80 100"><path d="M40 18 L64 30 L58 64 L40 78 L22 64 L16 30 Z" fill="#152738" stroke="#3498db" stroke-width="3"/><circle cx="40" cy="46" r="8" fill="#5dade2"/></svg>`,
+      a3: `<svg viewBox="0 0 80 100"><path d="M36 20 L44 20 L42 66 L38 66 Z" fill="#e74c3c"/><polygon points="40,6 48,20 32,20" fill="#f39c12"/><rect x="28" y="66" width="24" height="4" rx="2" fill="#d4af37"/><rect x="38" y="70" width="4" height="14" fill="#7f8c8d"/></svg>`,
+      a4: `<svg viewBox="0 0 80 100"><path d="M24 30 L56 30 L50 72 L40 78 L30 72 Z" fill="#301f11" stroke="#e67e22" stroke-width="2"/><line x1="20" y1="20" x2="44" y2="54" stroke="#f1c40f" stroke-width="4"/><polygon points="44,54 36,54 44,46" fill="#f1c40f"/></svg>`,
+      a5: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#23132e" stroke="#8e44ad" stroke-width="3"/><path d="M26 45 Q40 24 54 45 Q40 66 26 45" fill="#9b59b6"/></svg>`,
+      a6: `<svg viewBox="0 0 80 100"><rect x="26" y="34" width="28" height="24" rx="4" fill="#c0392b" stroke="#e74c3c" stroke-width="3"/><path d="M32 34 L32 24 Q40 16 48 24 L48 34" fill="none" stroke="#e74c3c" stroke-width="3"/></svg>`,
+      a7: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#132a1c" stroke="#2ecc71" stroke-width="3"/><polygon points="40,24 46,38 60,38 48,48 52,62 40,54 28,62 32,48 20,38 34,38" fill="#27ae60"/></svg>`,
+      a8: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#292813" stroke="#f1c40f" stroke-width="3"/><path d="M26 45 A14 14 0 1 1 40 59 L40 67 L50 56 L40 45 L40 53 A8 8 0 1 0 32 45 Z" fill="#f39c12"/></svg>`,
+      a9: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#201328" stroke="#9b59b6" stroke-width="3"/><rect x="28" y="28" width="8" height="34" rx="2" fill="#8e44ad"/><rect x="44" y="28" width="8" height="34" rx="2" fill="#8e44ad"/></svg>`,
+      a10: `<svg viewBox="0 0 80 100"><rect x="22" y="30" width="18" height="26" rx="3" fill="#e67e22" stroke="#d4af37"/><rect x="40" y="26" width="18" height="26" rx="3" fill="#d4af37" stroke="#fae48c"/></svg>`,
+      a11: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#2b2311" stroke="#d4af37" stroke-width="3"/><path d="M28 45 A10 10 0 0 1 40 35 A10 10 0 0 1 52 45 A10 10 0 0 1 40 55 A10 10 0 0 1 28 45" fill="none" stroke="#f1c40f" stroke-width="4"/><path d="M40 45 A10 10 0 0 1 52 35 A10 10 0 0 1 64 45 A10 10 0 0 1 52 55 A10 10 0 0 1 40 45" fill="none" stroke="#fae48c" stroke-width="4"/></svg>`,
+      a12: `<svg viewBox="0 0 80 100"><circle cx="40" cy="45" r="26" fill="#122a36" stroke="#00cec9" stroke-width="3"/><polygon points="40,24 56,32 56,50 40,64 24,50 24,32" fill="#81ecec"/></svg>`
     };
 
-    // ٢٠ شخصية مختلفة
     const CHARACTERS = [
       { id: 'c1', name: 'الفارس الحديدي', atk: 4, def: 5, desc: 'عند الدفاع، يخفض هجوم الخصم بنقطتين.', tier: 'متوسطة' },
       { id: 'c2', name: 'التنين المحترق', atk: 5, def: 3, desc: 'إذا تسبب بضرر، يضيف نقطة ضرر إضافية.', tier: 'قوية' },
@@ -412,7 +448,6 @@
       { id: 'c20', name: 'متصيد الكهوف', atk: 3, def: 3, desc: 'مقاتل متزن يستفيد من عثرات الخصوم.', tier: 'ضعيفة' }
     ];
 
-    // ١٢ نوع أكشن معدلة تماماً ومجموع نسخها ٤٠ كرت
     const ACTIONS = [
       { id: 'a1', name: 'رفض الأكشن', role: 'def', desc: 'يلغي بطاقة أكشن الخصم في المواجهة.', tier: 'متوسطة' },
       { id: 'a2', name: 'الدرع الواقي', role: 'def', val: 2, desc: 'يقلل الضرر الناتج عن هجوم بمقدار نقطتين.', tier: 'ضعيفة' },
@@ -430,11 +465,9 @@
 
     function createSplitDecks() {
       let charDeck = [], actDeck = [], u = 1;
-      // ٤٠ مقاتل (٢٠ × ٢)
       CHARACTERS.forEach(c => {
         for (let i = 0; i < 2; i++) charDeck.push({ ...c, uid: 'c_' + (u++), isChar: true });
       });
-      // ٤٠ أكشن
       const counts = { a10: 1, a11: 1, a5: 3, a9: 2, a1: 3, a6: 2, a8: 2, a12: 3, a2: 6, a3: 6, a4: 6, a7: 5 };
       ACTIONS.forEach(a => {
         for (let i = 0; i < (counts[a.id] || 0); i++) actDeck.push({ ...a, uid: 'a_' + (u++), isChar: false });
