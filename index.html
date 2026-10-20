@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -18,6 +17,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: 'Cairo', sans-serif; }
     body { background-color: var(--bg); color: var(--text); direction: rtl; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+    
     .btn {
       font-weight: 700; border: 1px solid var(--gold);
       background: linear-gradient(135deg, #2b2312, #15120a); color: var(--gold-light);
@@ -27,13 +27,16 @@
     .btn:hover { background: #3d3119; transform: translateY(-2px); border-color: var(--gold-light); }
     .btn-sec { border-color: #3f3f4e; background: #1c1c24; color: #cfcfe0; }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+    
     .input {
       width: 100%; padding: 10px; background: #09090d; border: 1px solid #333342;
       border-radius: 8px; color: #fff; text-align: center; font-size: 1rem; outline: none;
     }
     .input:focus { border-color: var(--gold); }
+
     .screen { display: none; min-height: 100vh; width: 100%; flex-direction: column; }
     .screen.active { display: flex; }
+
     #screen-menu { justify-content: center; align-items: center; text-align: center; padding: 20px; position: relative; }
     .logo {
       font-size: 3.2rem; font-weight: 900;
@@ -49,12 +52,14 @@
       margin-top: auto; padding: 16px; font-size: 0.9rem; color: var(--gold);
       letter-spacing: 1px; font-weight: 700; opacity: 0.95; text-align: center;
     }
+
     .header {
       background: #0f0f14; border-bottom: 1px solid var(--border); padding: 8px 14px;
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;
     }
     .badge { background: #181822; border: 1px solid #313142; padding: 3px 8px; border-radius: 6px; color: var(--gold-light); font-size: 0.8rem; }
     .badge b { color: #fff; }
+
     .field { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 1300px; width: 100%; margin: 0 auto; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
     .p-card {
@@ -67,29 +72,51 @@
     .bar { background: #09090c; height: 16px; border-radius: 4px; position: relative; overflow: hidden; margin: 5px 0; border: 1px solid #232330; }
     .fill { background: linear-gradient(90deg, #997a15, #d4af37, #f7e089); height: 100%; transition: width 0.3s; }
     .bar-txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #000; }
-    .arena-grid { display: grid; grid-template-columns: 1fr 280px; gap: 10px; min-height: 160px; }
+
+    .arena-grid { display: grid; grid-template-columns: 1fr 280px; gap: 10px; min-height: 180px; }
     @media (max-width: 800px) { .arena-grid { grid-template-columns: 1fr; } }
     .stage { background: #101016; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; }
-    .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
+    .logs { background: #0b0b0f; border: 1px solid #20202a; border-radius: 8px; padding: 8px; height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; }
     .log-row { padding: 3px 6px; background: #14141e; border-radius: 4px; border-right: 3px solid var(--gold); }
+
+    /* دليل الخطوات المباشر داخل الساحة */
+    .game-steps-guide {
+      background: #14141f; border: 1px solid #2d2d40; border-radius: 6px;
+      padding: 6px 10px; width: 100%; font-size: 0.78rem; color: #ccc;
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: 4px;
+    }
+    .guide-step { display: inline-flex; align-items: center; gap: 4px; }
+    .guide-step b { color: var(--gold-light); background: #222234; padding: 1px 5px; border-radius: 4px; }
+
     .selection-badge-box {
       background: #141420; border: 1px dashed var(--gold); border-radius: 6px;
       padding: 6px 10px; width: 100%; font-size: 0.85rem; display: flex;
-      justify-content: space-around; margin-bottom: 4px;
+      justify-content: space-around; margin-bottom: 2px;
     }
+
     .hand { background: #0f0f14; border-top: 1px solid var(--border); padding: 10px; margin-top: auto; }
     .cards-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
     .card {
-      min-width: 140px; max-width: 150px; background: #171722; border: 1px solid #333342;
+      min-width: 145px; max-width: 155px; background: #171722; border: 1px solid #333342;
       border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: 0.2s;
     }
     .card:hover { transform: translateY(-4px); border-color: var(--gold); }
     .card.sel-char { border-color: #ff6b6b; background: #261113; transform: translateY(-6px); box-shadow: 0 0 10px rgba(255,107,107,0.4); }
     .card.sel-act { border-color: #6bb3ff; background: #111a26; transform: translateY(-6px); box-shadow: 0 0 10px rgba(107,179,255,0.4); }
-    .card-name { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-name { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    
+    /* صندوق رسمة البطاقة */
+    .card-art-frame {
+      width: 100%; height: 75px; background: #09090e; border-radius: 6px;
+      border: 1px solid #252536; display: flex; align-items: center; justify-content: center;
+      margin: 2px 0; overflow: hidden;
+    }
+    .card-art-frame svg { width: 60px; height: 60px; }
+
     .stats { display: flex; justify-content: space-around; background: #0c0c10; padding: 2px 0; border-radius: 4px; font-weight: 800; font-size: 0.75rem; }
-    .desc { font-size: 0.7rem; color: var(--muted); min-height: 40px; line-height: 1.3; }
+    .desc { font-size: 0.68rem; color: var(--muted); min-height: 38px; line-height: 1.3; text-align: center; }
     .tier { font-size: 0.65rem; color: var(--gold); text-align: center; border-top: 1px solid #22222e; padding-top: 2px; }
+
     .clash-stage-box {
       display: flex; justify-content: space-around; align-items: stretch;
       background: #09090e; border: 1px solid var(--gold); border-radius: 10px;
@@ -112,11 +139,12 @@
       background: #0d0d14; border: 1px solid #252536; border-radius: 8px;
       padding: 10px; font-size: 0.85rem; line-height: 1.8; color: #eee; width: 100%; text-align: right;
     }
+
     .modal { position: fixed; inset: 0; background: rgba(3,3,5,0.94); z-index: 100; display: none; justify-content: center; align-items: center; padding: 14px; }
     .modal.active { display: flex; }
     .modal-box {
       background: var(--panel); border: 1px solid var(--gold); border-radius: 12px;
-      width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; padding: 18px;
+      width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; padding: 18px;
       display: flex; flex-direction: column; gap: 10px;
     }
   </style>
@@ -170,7 +198,7 @@
     </div>
   </section>
 
-  <!-- شاشة المباراة الرئيسية -->
+  <!-- شاشة المباراة -->
   <section id="screen-game" class="screen">
     <header class="header">
       <div class="badge">الوضع: <b id="head-mode">محلي</b></div>
@@ -188,7 +216,17 @@
       <div class="arena-grid">
         <div class="stage">
           <div id="turn-banner" style="color: var(--gold); font-weight: 800; font-size: 1.05rem;">الميدان جاهز</div>
+          
+          <!-- دليل حط الورقة المباشر -->
+          <div class="game-steps-guide" id="guide-box">
+            <span class="guide-step"><b>١</b> اختر مقاتل (أحمر)</span>
+            <span class="guide-step"><b>٢</b> اختر أكشن مساند (أزرق)</span>
+            <span class="guide-step"><b>٣</b> اضغط على الخصم</span>
+            <span class="guide-step"><b>٤</b> شن الهجوم</span>
+          </div>
+
           <div id="action-hint" style="color: var(--muted); font-size: 0.85rem;">اختر مقاتلاً (وأكشناً اختياري) وحدد الهدف</div>
+          
           <div class="selection-badge-box" id="selection-summary" style="display: none;">
             <div>مقاتل: <b id="lbl-sel-char" style="color:#ff6b6b;">-</b></div>
             <div>أكشن: <b id="lbl-sel-act" style="color:#6bb3ff;">-</b></div>
@@ -248,7 +286,7 @@
     </div>
   </div>
 
-  <!-- نافذة المعرض -->
+  <!-- المعرض -->
   <div id="modal-gallery" class="modal">
     <div class="modal-box" style="max-width: 600px;">
       <h3 style="color: var(--gold-light);">معرض البطاقات الأساسية (٨٠ بطاقة)</h3>
@@ -257,17 +295,38 @@
     </div>
   </div>
 
-  <!-- القواعد -->
+  <!-- القواعد مع شرح طريقة حط الورقة وحسبة الهجوم -->
   <div id="modal-rules" class="modal">
     <div class="modal-box" style="max-width: 520px;">
       <h3 style="color: var(--gold-light);">طريقة اللعب وقواعد المعركة</h3>
       <div style="font-size: 0.85rem; line-height: 1.8; color: #ddd; display: flex; flex-direction: column; gap: 8px;">
         <p>• <b>البطاقات واليد:</b> تتكون المجموعة من ٨٠ بطاقة (٤٠ مقاتلاً و٤٠ أكشن). تبدأ بـ ١٥ طاقة، ويد متوازنة تحتوي دائماً على ٣ مقاتلين و٣ أكشن وتتجدد تلقائياً ببداية دورك.</p>
-        <p>• <b>الهجوم السري:</b> تختار مقاتلك ويمكنك تعزيزه بأكشن، أو تلعب كرت أكشن عام بمفرده. المدافع لا يرى ورقتك إطلاقاً بل تظهر له كرت مقلوب ❓ وعليه توقع قوتها لصدها.</p>
-        <p>• <b>قدرة ساحر الجليد:</b> تسمح لمالكها بدمج كرتي أكشن معاً في مواجهة واحدة!</p>
-        <p>• <b>كرت الدور المضاعف:</b> كرت نادر يمنحك دورين إضافيين كاملين متتاليين بعد نهاية دورك الحالي.</p>
-        <p>• <b>عكس الاتجاه في اللعب الثنائي:</b> يعيد الدور فوراً لمن لعبه ليحصل على دور إضافي.</p>
-        <p>• <b>حسبة الهجوم:</b> الضرر = (الهجوم الإجمالي) − (الدفاع الفعّال). يخصم من طاقة الخصم مباشرة وينتقل الدور تلقائياً.</p>
+        
+        <div style="background: #11111e; border: 1px solid #333355; border-radius: 8px; padding: 10px;">
+          <b style="color: var(--gold-light); font-size: 0.95rem; display: block; margin-bottom: 4px;">🎯 طريقة حط الورقة واللعب بالخطوات:</b>
+          <ul style="padding-right: 18px; font-size: 0.8rem; color: #ccc; line-height: 1.6;">
+            <li><b>طريقة الهجوم:</b> اضغط كرت مقاتل من يدك (يضيء بالأحمر) ➔ اضغط كرت أكشن مساند إن أردت (يضيء بالأزرق) ➔ اضغط على بطاقة الخصم لاستهدافه ➔ اضغط زر «شن هجوم سري».</li>
+            <li><b>الأكشن العام بمفرده:</b> اضغط على كرت الأكشن العام فقط (مثل استعادة الطاقة أو السرقة) واستخدمه مباشرة لإنهاء دورك.</li>
+            <li><b>طريقة الدفاع:</b> كرت المهاجم مخفي تماماً `❓`؛ اضغط على مقاتل من يدك للتصدي (وأكشناً دفاعياً اختياري) ثم اضغط زر «تثبيت الدفاع» (أو دافع بأكشن فقط إذا لم تملك مقاتلاً).</li>
+          </ul>
+        </div>
+
+        <div style="background: #0d0d16; border: 1px solid var(--gold); border-radius: 8px; padding: 10px; margin: 4px 0;">
+          <b style="color: var(--gold-light); font-size: 0.95rem; display: block; margin-bottom: 4px;">⚔️ معادلة حسبة الهجوم والضرر:</b>
+          <div style="color: #fae48c; font-weight: 700; font-size: 0.9rem; margin-bottom: 4px;">
+            الضرر النهائي = (الهجوم الإجمالي) − (الدفاع الفعّال)
+          </div>
+          <ul style="padding-right: 18px; font-size: 0.8rem; color: #ccc; line-height: 1.6;">
+            <li><b>الهجوم الإجمالي:</b> هجوم المقاتل الأساسي + إضافات الأكشن (مثل تعزيز الهجوم +٢) + قدرات المقاتل.</li>
+            <li><b>الدفاع الفعّال:</b> دفاع المقاتل (أو ٠ إذا دافعت بأكشن فقط) − نقاط اختراق الدفاع + امتصاص الضرر من الأكشن (مثل الدرع الواقي يمتص ٢ ضرر).</li>
+            <li><b>تطبيق الضرر:</b> يخصم الناتج من طاقة المدافع مباشرة (إذا كان الدفاع مساوياً أو أكبر من الهجوم يصبح الضرر صفراً).</li>
+            <li><b>التأثيرات اللاحقة:</b> بعد الضرر تتفعل قدرات مثل مصاص الطاقة (+١ طاقة)، أو صاعق البرق (رد ٢ ضرر للمهاجم إذا كان الضرر نقطتين أو أقل).</li>
+            <li><b>الإلغاء:</b> كرت «منع الدفاع» يلغي أكشن المدافع، وكرت «رفض الأكشن» يلغي أكشن المهاجم تماماً قبل الحسبة!</li>
+          </ul>
+        </div>
+
+        <p>• <b>منع التجمع:</b> أقصى حد هجومان يتلقاهما نفس اللاعب خلال الجولة الواحدة لحمايته من التكتل.</p>
+        <p>• <b>انتقال الدور:</b> بعد أي هجوم ومهما كانت النتيجة، ينتقل الدور تلقائياً للاعب التالي مباشرة وتتجدد بطاقاته.</p>
       </div>
       <button class="btn btn-sec" onclick="Game.closeModals()">فهمت ذلك</button>
     </div>
@@ -288,6 +347,46 @@
       if (n == null) return '';
       return n.toString().replace(/[0-9]/g, d => ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
     }
+
+    // مكتبة رسومات أصلية ومميزة بدون أي ملامح بشرية مكشوفة أو فتيات
+    // تعتمد بالكامل على خوذ حربية، أقنعة حديدية، أردية مظلمة، وحوش، ودروع وأسلحة خيالية
+    const ART = {
+      // مقاتلون
+      c1: `<svg viewBox="0 0 60 60"><path d="M15 15 L45 15 L40 45 L30 52 L20 45 Z" fill="#2d323f" stroke="#d4af37" stroke-width="2"/><rect x="22" y="26" width="16" height="3" fill="#fbe58a"/><path d="M10 12 L18 20 M50 12 L42 20" stroke="#d4af37" stroke-width="2"/></svg>`, // الفارس الحديدي
+      c2: `<svg viewBox="0 0 60 60"><path d="M30 10 Q45 25 40 40 Q45 35 48 50 Q30 55 12 50 Q15 35 20 40 Q15 25 30 10 Z" fill="#7a1818" stroke="#f39c12" stroke-width="2"/><circle cx="30" cy="35" r="5" fill="#f1c40f"/></svg>`, // التنين المحترق
+      c3: `<svg viewBox="0 0 60 60"><path d="M18 18 Q30 8 42 18 L40 46 Q30 54 20 46 Z" fill="#14141c" stroke="#444" stroke-width="2"/><ellipse cx="25" cy="30" rx="3" ry="1.5" fill="#f1c40f"/><ellipse cx="35" cy="30" rx="3" ry="1.5" fill="#f1c40f"/></svg>`, // قاتل الظلال
+      c4: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="#101828" stroke="#3498db" stroke-width="2"/><polygon points="32,12 18,34 29,34 27,48 44,26 33,26" fill="#f1c40f"/></svg>`, // صاعق البرق
+      c5: `<svg viewBox="0 0 60 60"><path d="M30 12 L48 24 L42 48 L30 54 L18 48 L12 24 Z" fill="#242014" stroke="#d4af37" stroke-width="2"/><circle cx="30" cy="32" r="7" fill="#fbe58a"/></svg>`, // فارس النور
+      c6: `<svg viewBox="0 0 60 60"><polygon points="30,10 36,24 50,30 36,36 30,50 24,36 10,30 24,24" fill="#1c3b52" stroke="#5dade2" stroke-width="2"/><circle cx="30" cy="30" r="4" fill="#ebf5fb"/></svg>`, // ساحر الجليد
+      c7: `<svg viewBox="0 0 60 60"><path d="M14 20 L30 32 L46 20 L50 44 L30 54 L10 44 Z" fill="#3d1418" stroke="#c0392b" stroke-width="2"/><path d="M22 30 L38 30 L30 42 Z" fill="#e74c3c"/></svg>`, // المحارب الهائج
+      c8: `<svg viewBox="0 0 60 60"><polygon points="30,12 48,24 42,48 18,48 12,24" fill="#0e2a2a" stroke="#1abc9c" stroke-width="2"/><polygon points="30,20 40,28 36,42 24,42 20,28" fill="#16a085"/></svg>`, // حارس الكريستال
+      c9: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#23132e" stroke="#8e44ad" stroke-width="2"/><circle cx="30" cy="30" r="10" fill="#4a235a"/><circle cx="30" cy="30" r="3" fill="#d4af37"/></svg>`, // مصاص الطاقة
+      c10: `<svg viewBox="0 0 60 60"><path d="M12 26 Q30 14 48 26 Q30 46 12 26 Z" fill="#301f11" stroke="#e67e22" stroke-width="2"/><polygon points="30,24 36,38 30,34 24,38" fill="#f39c12"/></svg>`, // الصقر
+      c11: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#222" stroke="#7f8c8d" stroke-width="2"/><path d="M22 28 Q30 20 38 28 M24 38 Q30 32 36 38" stroke="#e67e22" stroke-width="2" fill="none"/></svg>`, // حارس الرماد
+      c12: `<svg viewBox="0 0 60 60"><rect x="16" y="16" width="28" height="28" rx="4" fill="#151b24" stroke="#2980b9" stroke-width="2"/><rect x="20" y="24" width="20" height="4" fill="#d4af37"/></svg>`, // نينجا الرياح
+      c13: `<svg viewBox="0 0 60 60"><path d="M16 12 L44 12 L44 40 L30 52 L16 40 Z" fill="#2c3e50" stroke="#bdc3c7" stroke-width="2"/><rect x="28" y="18" width="4" height="24" fill="#bdc3c7"/></svg>`, // جندي الترس
+      c14: `<svg viewBox="0 0 60 60"><path d="M16 22 Q30 10 44 22 L40 48 Q30 52 20 48 Z" fill="#332412" stroke="#d35400" stroke-width="2"/><rect x="22" y="28" width="16" height="3" fill="#f39c12"/></svg>`, // سيد الرمال
+      c15: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#1b262c" stroke="#16a085" stroke-width="2"/><circle cx="24" cy="28" r="4" fill="#2ecc71"/><circle cx="36" cy="28" r="4" fill="#2ecc71"/></svg>`, // صياد الضباب
+      c16: `<svg viewBox="0 0 60 60"><polygon points="30,12 46,26 38,48 22,48 14,26" fill="#1e1e24" stroke="#e74c3c" stroke-width="2"/><circle cx="30" cy="30" r="5" fill="#e74c3c"/></svg>`, // قناص الأطلال
+      c17: `<svg viewBox="0 0 60 60"><ellipse cx="30" cy="30" rx="16" ry="22" fill="#1f1f28" stroke="#7f8c8d" stroke-width="2"/><line x1="30" y1="16" x2="30" y2="44" stroke="#bdc3c7" stroke-width="2"/></svg>`, // الفارس الصامت
+      c18: `<svg viewBox="0 0 60 60"><path d="M18 16 Q30 8 42 16 L40 46 Q30 52 20 46 Z" fill="#2e271a" stroke="#8e44ad" stroke-width="2"/><line x1="30" y1="20" x2="30" y2="40" stroke="#d4af37" stroke-width="2"/></svg>`, // رامي السهام
+      c19: `<svg viewBox="0 0 60 60"><rect x="16" y="14" width="28" height="34" fill="#1c1c1c" stroke="#95a5a6" stroke-width="2"/><line x1="16" y1="24" x2="44" y2="24" stroke="#95a5a6" stroke-width="2"/><line x1="16" y1="36" x2="44" y2="36" stroke="#95a5a6" stroke-width="2"/><line x1="30" y1="14" x2="30" y2="48" stroke="#95a5a6" stroke-width="2"/></svg>`, // حارس البوابة
+      c20: `<svg viewBox="0 0 60 60"><polygon points="30,14 44,24 38,46 22,46 16,24" fill="#1a1c13" stroke="#27ae60" stroke-width="2"/><polygon points="26,34 30,40 34,34" fill="#2ecc71"/></svg>`, // متصيد الكهوف
+      
+      // بطاقات أكشن
+      a1: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#241316" stroke="#e74c3c" stroke-width="2"/><line x1="18" y1="18" x2="42" y2="42" stroke="#e74c3c" stroke-width="4"/><line x1="42" y1="18" x2="18" y2="42" stroke="#e74c3c" stroke-width="4"/></svg>`, // رفض الأكشن
+      a2: `<svg viewBox="0 0 60 60"><path d="M30 14 L46 22 L42 42 L30 50 L18 42 L14 22 Z" fill="#142634" stroke="#3498db" stroke-width="2"/><circle cx="30" cy="32" r="6" fill="#5dade2"/></svg>`, // الدرع الواقي
+      a3: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#301512" stroke="#e67e22" stroke-width="2"/><path d="M22 38 L38 22 M34 18 L42 26" stroke="#e74c3c" stroke-width="3"/></svg>`, // تعزيز الهجوم
+      a4: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2c1a0e" stroke="#d35400" stroke-width="2"/><polygon points="30,14 36,36 30,32 24,36" fill="#e67e22"/></svg>`, // كسر الدفاع
+      a5: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#23132e" stroke="#8e44ad" stroke-width="2"/><path d="M20 30 Q30 16 40 30 Q30 44 20 30" fill="#9b59b6"/></svg>`, // سرقة الطاقة
+      a6: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#221215" stroke="#c0392b" stroke-width="2"/><rect x="22" y="24" width="16" height="14" rx="2" fill="#e74c3c"/><path d="M25 24 L25 18 Q30 14 35 18 L35 24" fill="none" stroke="#e74c3c" stroke-width="2"/></svg>`, // منع الدفاع
+      a7: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#12261a" stroke="#2ecc71" stroke-width="2"/><polygon points="30,16 34,26 44,26 36,32 39,42 30,36 21,42 24,32 16,26 26,26" fill="#27ae60"/></svg>`, // استعادة الطاقة
+      a8: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#252514" stroke="#f1c40f" stroke-width="2"/><path d="M20 30 A10 10 0 1 1 30 40 L30 46 L38 38 L30 30 L30 36 A6 6 0 1 0 24 30 Z" fill="#f39c12"/></svg>`, // عكس الاتجاه
+      a9: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#201326" stroke="#9b59b6" stroke-width="2"/><rect x="22" y="18" width="5" height="24" fill="#8e44ad"/><rect x="33" y="18" width="5" height="24" fill="#8e44ad"/></svg>`, // إيقاف اللاعب
+      a10: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2b2011" stroke="#d4af37" stroke-width="2"/><rect x="18" y="22" width="12" height="18" rx="2" fill="#f39c12"/><rect x="30" y="20" width="12" height="18" rx="2" fill="#d4af37"/></svg>`, // تبادل البطاقات
+      a11: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#2d2410" stroke="#f1c40f" stroke-width="2"/><path d="M22 30 A8 8 0 0 1 30 22 A8 8 0 0 1 38 30 A8 8 0 0 1 30 38 A8 8 0 0 1 22 30" fill="none" stroke="#f39c12" stroke-width="3"/><path d="M30 30 A8 8 0 0 1 38 22 A8 8 0 0 1 46 30 A8 8 0 0 1 38 38 A8 8 0 0 1 30 30" fill="none" stroke="#f1c40f" stroke-width="3"/></svg>`, // الدور المضاعف
+      a12: `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="#132630" stroke="#00cec9" stroke-width="2"/><polygon points="30,16 42,22 42,34 30,44 18,34 18,22" fill="#81ecec"/></svg>` // الحماية المؤقتة
+    };
 
     // ٢٠ شخصية مختلفة
     const CHARACTERS = [
@@ -335,11 +434,7 @@
       CHARACTERS.forEach(c => {
         for (let i = 0; i < 2; i++) charDeck.push({ ...c, uid: 'c_' + (u++), isChar: true });
       });
-      // ٤٠ أكشن موزعة بدقة:
-      // نادرة جداً (٢): تبادل البطاقات (١)، الدور المضاعف (١)
-      // قوية (٥): سرقة الطاقة (٣)، إيقاف اللاعب (٢)
-      // متوسطة (١٠): رفض الأكشن (٣)، منع الدفاع (٢)، عكس الاتجاه (٢)، الحماية المؤقتة (٣)
-      // ضعيفة (٢٣): الدرع الواقي (٦)، تعزيز الهجوم (٦)، كسر الدفاع (٦)، استعادة الطاقة (٥) = ٤٠ أكشن
+      // ٤٠ أكشن
       const counts = { a10: 1, a11: 1, a5: 3, a9: 2, a1: 3, a6: 2, a8: 2, a12: 3, a2: 6, a3: 6, a4: 6, a7: 5 };
       ACTIONS.forEach(a => {
         for (let i = 0; i < (counts[a.id] || 0); i++) actDeck.push({ ...a, uid: 'a_' + (u++), isChar: false });
@@ -382,7 +477,8 @@
           const el = document.createElement('div');
           el.className = 'card';
           el.innerHTML = `
-            <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+            <div class="card-name">${c.name}</div>
+            <div class="card-art-frame">${ART[c.id] || ''}</div>
             ${c.atk ? `<div class="stats"><span style="color:#ff6b6b">هجوم: ${toAr(c.atk)}</span><span style="color:#6bb3ff">دفاع: ${toAr(c.def)}</span></div>` : ''}
             <div class="desc">${c.desc}</div>
             <div class="tier">${c.tier}</div>
@@ -411,7 +507,6 @@
           });
         }
 
-        // توزيع يد البداية: ٣ شخصيات + ٣ أكشن بالضبط
         let hands = {};
         players.forEach(p => {
           hands[p.id] = [...charDeck.splice(0, 3), ...actDeck.splice(0, 3)];
@@ -436,7 +531,6 @@
           return;
         }
 
-        // تجديد اليد التلقائي والذكي لـ ٣ مقاتلين و ٣ أكشن
         this.refillPlayerHand(p.id);
 
         document.getElementById('pass-player-name').textContent = `دور ${p.name}`;
@@ -554,7 +648,6 @@
         this.state.actDeck = actDeck;
         this.state.turnIdx = 0;
 
-        // توزيع ٣ مقاتلين + ٣ أكشن لكل لاعب أونلاين
         this.state.players.forEach(p => {
           this.state.hands[p.id] = [...this.state.charDeck.splice(0, 3), ...this.state.actDeck.splice(0, 3)];
           p.count = 6;
@@ -631,10 +724,10 @@
         const banner = document.getElementById('turn-banner');
         if (this.pendingAttack) {
           const targetP = s.players.find(p => p.id === this.pendingAttack.targetId);
-          banner.textContent = `⚔️ هجوم جارٍ على ${targetP.name} (المدافع يخمن ويختار)...`;
+          banner.textContent = `⚔️ هجوم جارٍ على ${targetP.name} (المدافع يخمن ويصد)...`;
           banner.style.color = '#ff6b6b';
         } else if (isMyTurn) {
-          banner.textContent = `★ دورك الآن (${curPlayer.name}) - اختر مقاتلاً للهجوم أو العب أكشناً عاماً ★`;
+          banner.textContent = `★ دورك الآن (${curPlayer.name}) ★`;
           banner.style.color = 'var(--gold-light)';
         } else {
           banner.textContent = `انتظر دورك (الدور الحالي لـ: ${curPlayer ? curPlayer.name : ''})`;
@@ -700,7 +793,6 @@
             if (card.isChar) {
               this.selCharUid = (this.selCharUid === card.uid) ? null : card.uid;
             } else {
-              // قدرة ساحر الجليد: تسمح بتحديد بطاقتي أكشن بدلاً من واحدة!
               const currentSelChar = hand.find(c => c.uid === this.selCharUid);
               const maxActionsAllowed = (currentSelChar && currentSelChar.id === 'c6') ? 2 : 1;
 
@@ -710,7 +802,7 @@
                 if (this.selActUids.length < maxActionsAllowed) {
                   this.selActUids.push(card.uid);
                 } else {
-                  this.selActUids = [card.uid]; // استبدال عند الحد الأقصى
+                  this.selActUids = [card.uid];
                 }
               }
             }
@@ -718,10 +810,8 @@
           };
 
           el.innerHTML = `
-            <div style="display:flex; justify-content:space-between;">
-              <span class="card-name">${card.name}</span>
-              <span style="font-size:0.65rem; color:var(--gold);">${card.isChar ? 'شخصية' : 'أكشن'}</span>
-            </div>
+            <div class="card-name">${card.name}</div>
+            <div class="card-art-frame">${ART[card.id] || ''}</div>
             ${card.isChar ? `<div class="stats"><span style="color:#ff6b6b">هجوم: ${toAr(card.atk)}</span><span style="color:#6bb3ff">دفاع: ${toAr(card.def)}</span></div>` : ''}
             <div class="desc">${card.desc}</div>
             <div class="tier">${card.tier}</div>
@@ -729,7 +819,6 @@
           hList.appendChild(el);
         });
 
-        // شريط تأكيد الخيارات المحددة
         const summaryBox = document.getElementById('selection-summary');
         const selChar = hand.find(c => c.uid === this.selCharUid);
         const selActs = hand.filter(c => this.selActUids.includes(c.uid));
@@ -757,13 +846,20 @@
       renderActions(curPlayer, isMyTurn, hand, selChar, selActs) {
         const hint = document.getElementById('action-hint');
         const box = document.getElementById('action-buttons-box');
+        const guideBox = document.getElementById('guide-box');
         box.innerHTML = '';
 
-        // ١. المدافع يرد على الهجوم السري
+        // ١. طور الدفاع السري
         if (this.pendingAttack) {
           const isDefender = (this.mode === 'local') ? true : (this.pendingAttack.targetId === this.myId);
           if (isDefender) {
-            hint.textContent = `⚠️ ${this.pendingAttack.attackerName} يهاجمك بكرت سري ❓! اختر مقاتلاً (وأكشناً دفاعياً) لتصد:`;
+            guideBox.innerHTML = `
+              <span class="guide-step"><b>١</b> بطاقة المهاجم مخفية ❓</span>
+              <span class="guide-step"><b>٢</b> اختر مقاتل للصد</span>
+              <span class="guide-step"><b>٣</b> اختر أكشن دفاعي (اختياري)</span>
+              <span class="guide-step"><b>٤</b> اضغط تثبيت الدفاع</span>
+            `;
+            hint.textContent = `⚠️ هجوم سري وارد! اختر دفاعك وتوقع قوة ضربة ${this.pendingAttack.attackerName}:`;
             
             const btnDef = document.createElement('button');
             btnDef.className = 'btn';
@@ -780,20 +876,29 @@
             };
             box.appendChild(btnSkip);
           } else {
-            hint.textContent = 'في انتظار أن يختار المدافع بطاقته بالسرية...';
+            guideBox.innerHTML = `<span>⏳ في انتظار أن يختار المدافع بطاقته بالسرية...</span>`;
+            hint.textContent = 'المدافع يخمن قوة الهجوم ويختار أوراقه...';
           }
           return;
         }
 
-        // ٢. دور المهاجم
+        // ٢. طور المهاجم
         if (!isMyTurn) {
-          hint.textContent = 'ليس دورك الآن، انتظر حتى ينتهي الخصم من حركته...';
+          guideBox.innerHTML = `<span>⏳ دور الخصم حالياً، انتظر حتى ينتهي دوره...</span>`;
+          hint.textContent = 'انتظر حتى ينتهي الخصم من حركته...';
           return;
         }
 
+        guideBox.innerHTML = `
+          <span class="guide-step"><b>١</b> اختر مقاتل (أحمر)</span>
+          <span class="guide-step"><b>٢</b> أكشن مساند (أزرق)</span>
+          <span class="guide-step"><b>٣</b> اضغط على الخصم</span>
+          <span class="guide-step"><b>٤</b> شن الهجوم</span>
+        `;
+
         if (selChar) {
           const actTxt = selActs.length > 0 ? `+ أكشن: «${selActs.map(a => a.name).join(' + ')}»` : '';
-          hint.textContent = `مقاتل: «${selChar.name}» ${actTxt}. حدد هدفاً من الخصوم:`;
+          hint.textContent = `مقاتل: «${selChar.name}» ${actTxt}. اضغط على الخصم المراد مهاجمته بالأعلى:`;
           if (this.selTargetId) {
             const target = this.state.players.find(p => p.id === this.selTargetId);
             const btn = document.createElement('button');
@@ -824,7 +929,7 @@
             box.appendChild(btn);
           }
         } else {
-          hint.textContent = 'اختر ورقة مقاتل لمهاجمة خصم، أو اختر ورقة أكشن عامة لتلعبها بمفردها';
+          hint.textContent = 'اضغط على كرت مقاتل لمهاجمة خصم، أو كرت أكشن عام لتلعبه بمفرده';
         }
       },
 
@@ -944,13 +1049,11 @@
         let atkActionBlocked = false;
         let actionLogs = [];
 
-        // فحص منع الدفاع
         if (atkActs.some(a => a.id === 'a6')) {
           defActionBlocked = true;
           actionLogs.push(`🚫 «منع الدفاع»: تم تعطيل وإلغاء جميع أكشنات المدافع الدفاعية!`);
         }
 
-        // فحص رفض الأكشن
         if (defActs.some(a => a.id === 'a1') && !defActionBlocked) {
           atkActionBlocked = true;
           actionLogs.push(`🛡️ «رفض الأكشن»: تصدى المدافع وألغى كروت أكشن المهاجم!`);
@@ -959,7 +1062,6 @@
         let bonusAtk = 0;
         let pierce = 0;
 
-        // تطبيق أكشنات المهاجم
         if (!atkActionBlocked) {
           atkActs.forEach(act => {
             if (act.id === 'a3') { bonusAtk += 2; actionLogs.push(`⚡ «تعزيز الهجوم»: +٢ هجوم.`); }
@@ -974,7 +1076,6 @@
           });
         }
 
-        // تطبيق أكشنات المدافع
         let dmgReduction = 0;
         if (!defActionBlocked) {
           defActs.forEach(act => {
@@ -983,7 +1084,6 @@
           });
         }
 
-        // قدرات الشخصيات
         let baseAtk = atkChar.atk;
         if (atkChar.id === 'c7' && attacker.energy <= 5) { bonusAtk += 1; actionLogs.push(`🔥 «المحارب الهائج»: +١ هجوم.`); }
         if (atkChar.id === 'c10' && defender.energy > attacker.energy) { bonusAtk += 2; actionLogs.push(`🦅 «الصقر»: +٢ هجوم.`); }
@@ -1040,7 +1140,6 @@
         this.state.logs.unshift(`نتيجة الهجوم: تسبب ${attacker.name} بـ ${toAr(finalDamage)} ضرر على ${defender.name}.`);
         this.pendingAttack = null;
 
-        // انتقال الدور حتمياً ومباشرة
         this.advanceTurn();
 
         if (this.mode === 'local') {
@@ -1109,17 +1208,16 @@
         const target = this.state.players.find(p => p.id === targetId);
 
         switch (card.id) {
-          case 'a7': // استعادة الطاقة
+          case 'a7':
             player.energy = Math.min(15, player.energy + 2);
             this.state.logs.unshift(`استعاد ${player.name} نقطتي طاقة.`);
             break;
-          case 'a12': // الحماية المؤقتة
+          case 'a12':
             player.shield = true;
             this.state.logs.unshift(`فعّل ${player.name} الحماية المؤقتة.`);
             break;
-          case 'a8': // عكس الاتجاه
+          case 'a8':
             if (this.state.players.length === 2) {
-              // في حالة لاعبين (١ ضد ١): تعيد اللعب فوراً لمن لعبها كدور إضافي!
               player.extraTurns = (player.extraTurns || 0) + 1;
               this.state.logs.unshift(`🔄 «عكس الاتجاه» في اللعب الثنائي: حصل ${player.name} على دور إضافي فوراً!`);
             } else {
@@ -1127,13 +1225,13 @@
               this.state.logs.unshift(`🔄 «عكس الاتجاه»: تم عكس اتجاه دوران الأدوار.`);
             }
             break;
-          case 'a9': // إيقاف اللاعب
+          case 'a9':
             if (target) {
               target.skipped = true;
               this.state.logs.unshift(`🚫 «إيقاف اللاعب»: سيتم تخطي دور ${target.name} القادم.`);
             }
             break;
-          case 'a5': // سرقة الطاقة
+          case 'a5':
             if (target && target.energy >= 9) {
               target.energy -= 2; player.energy = Math.min(15, player.energy + 2);
               this.state.logs.unshift(`⚡ سرق ${player.name} نقطتي طاقة من ${target.name}.`);
@@ -1141,7 +1239,7 @@
               this.state.logs.unshift(`فشلت سرقة الطاقة؛ طاقة الخصم أقل من ٩.`);
             }
             break;
-          case 'a10': // تبادل البطاقات
+          case 'a10':
             if (target) {
               const temp = [...(this.state.hands[player.id] || [])];
               this.state.hands[player.id] = [...(this.state.hands[target.id] || [])];
@@ -1149,7 +1247,7 @@
               this.state.logs.unshift(`🔄 تبادل ${player.name} كامل بطاقات يده مع ${target.name} سرّاً.`);
             }
             break;
-          case 'a11': // كرت الدور المضاعف (الجديد النادر)
+          case 'a11':
             player.extraTurns = (player.extraTurns || 0) + 2;
             this.state.logs.unshift(`🌟 كرت نادر «الدور المضاعف»: حصل ${player.name} على دورتين إضافيتين متتاليتين!`);
             break;
@@ -1161,11 +1259,9 @@
         else this.sync();
       },
 
-      // سحب نوع محدد مع إعادة تدوير المستهلكات تلقائياً
       drawSpecificCard(isChar) {
         let deck = isChar ? this.state.charDeck : this.state.actDeck;
         if (!deck || deck.length === 0) {
-          // استرجاع المستهلكات من هذا النوع وخلطها مجدداً
           const recycled = this.state.disc.filter(c => c.isChar === isChar);
           this.state.disc = this.state.disc.filter(c => c.isChar !== isChar);
           if (recycled.length > 0) {
@@ -1178,20 +1274,17 @@
         return (deck && deck.length > 0) ? deck.pop() : null;
       },
 
-      // تجديد يد اللاعب التلقائي لـ ٣ مقاتلين و ٣ أكشن
       refillPlayerHand(playerId) {
         const hand = this.state.hands[playerId] || [];
         const charsInHand = hand.filter(c => c.isChar).length;
         const actsInHand = hand.filter(c => !c.isChar).length;
 
-        // سحب مقاتلين حتى اكتمال ٣
         const neededChars = Math.max(0, 3 - charsInHand);
         for (let i = 0; i < neededChars; i++) {
           const card = this.drawSpecificCard(true);
           if (card) hand.push(card);
         }
 
-        // سحب أكشن حتى اكتمال ٣
         const neededActs = Math.max(0, 3 - actsInHand);
         for (let i = 0; i < neededActs; i++) {
           const card = this.drawSpecificCard(false);
@@ -1212,7 +1305,6 @@
       advanceTurn() {
         const curP = this.state.players[this.state.turnIdx];
 
-        // التحقق من الأدوار الإضافية (مثل كرت الدور المضاعف أو عكس الاتجاه الثنائي)
         if (curP && curP.extraTurns > 0) {
           curP.extraTurns--;
           this.state.logs.unshift(`استمر دور ${curP.name} (دور إضافي متبقي: ${toAr(curP.extraTurns)}).`);
@@ -1244,7 +1336,6 @@
 
         const nextP = this.state.players[idx];
 
-        // التحقق من كرت الإيقاف للاعب التالي
         if (nextP.skipped) {
           nextP.skipped = false;
           this.state.logs.unshift(`تم تخطي دور ${nextP.name} بتأثير كرت الإيقاف.`);
@@ -1262,4 +1353,3 @@
   </script>
 </body>
 </html>
-
