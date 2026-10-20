@@ -130,14 +130,14 @@
     .card.sel-act { border-color: #40a9ff; background: linear-gradient(165deg, #102438 0%, #08111c 100%); transform: translateY(-7px); box-shadow: 0 0 16px rgba(64,169,255,0.5); }
     .card-name { font-weight: 800; font-size: 0.86rem; color: #fff; text-shadow: 0 1px 3px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
     
-    /* إطار اللوحة الفنية الفانتازية (Canvas) */
+    /* إطار اللوحة الفنية الفانتازية الطولية */
     .card-art-frame {
       width: 100%; height: 130px; background: #06060a;
       border-radius: 6px; border: 1px solid #363020; display: flex; align-items: center; justify-content: center;
       margin: 2px 0; overflow: hidden; position: relative;
     }
-    .card-art-canvas {
-      width: 100%; height: 100%; display: block; border-radius: 5px;
+    .card-art-frame svg {
+      width: 100%; height: 100%; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.95));
     }
 
     .stats {
@@ -249,6 +249,7 @@
         <div class="stage">
           <div id="turn-banner" style="color: var(--gold); font-weight: 800; font-size: 1.05rem;">الميدان جاهز</div>
           
+          <!-- دليل حط الورقة المباشر -->
           <div class="game-steps-guide" id="guide-box">
             <span class="guide-step"><b>١</b> اختر مقاتل (أحمر)</span>
             <span class="guide-step"><b>٢</b> اختر أكشن مساند (أزرق)</span>
@@ -379,289 +380,112 @@
     }
 
     // ========================================================
-    // محرك رسم اللوحات الفانتازية المظلمة داخلياً (Dark Fantasy Canvas Engine)
-    // يرسم مقاتلين كاملين بدرع وخوذة وأسلحة وضباب مظلم دون روابط خارجية ولا صور عشوائية
+    // محرك الفانتازيا المظلمة التوليدي الخفيف والشامل (Procedural Dark Fantasy Art)
+    // رسوم فانتازيا ملحمية كاملة الأجساد بدون ملامح بشرية ولا صلبان ولا فتيات
     // ========================================================
-    function drawCardArt(canvas, cardId) {
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-
-      ctx.clearRect(0, 0, w, h);
-
-      // ١. خلفيات أسطورية مظلمة بتدرجات وأجواء فانتازية
-      const bgGradients = {
-        fire: ['#3a0e08', '#140402', '#ff5722'],
-        shadow: ['#120c1f', '#06030a', '#9c27b0'],
-        storm: ['#0d1e33', '#030810', '#00d2d3'],
-        holy: ['#2e250f', '#0c0a04', '#ffd32a'],
-        frost: ['#0d2838', '#030a10', '#48dbfb'],
-        earth: ['#1b2416', '#060a04', '#10ac84'],
-        blood: ['#33080c', '#0f0203', '#ff3838'],
-        iron: ['#1e2129', '#08090c', '#bdc3c7']
+    function getCardArtSVG(id) {
+      const themes = {
+        c1:  { bg1:'#1e2633', bg2:'#06090e', p:'#2f3b4c', acc:'#d4af37', eye:'#fbe089', horn:true,  wp:'sword', shield:true },
+        c2:  { bg1:'#4a120b', bg2:'#0e0302', p:'#782317', acc:'#e67e22', eye:'#f1c40f', horn:true,  wp:'dragon', wing:true },
+        c3:  { bg1:'#1b1129', bg2:'#06020a', p:'#160e21', acc:'#8e44ad', eye:'#f1c40f', cowl:true,  wp:'daggers' },
+        c4:  { bg1:'#10273d', bg2:'#030910', p:'#1c3d5a', acc:'#3498db', eye:'#00d2d3', wings:true, wp:'spear' },
+        c5:  { bg1:'#382d12', bg2:'#0c0903', p:'#4d3d14', acc:'#d4af37', eye:'#ffffff', solar:true, wp:'blade' },
+        c6:  { bg1:'#133545', bg2:'#030c12', p:'#194257', acc:'#5dade2', eye:'#ebf5fb', crown:true, wp:'staff' },
+        c7:  { bg1:'#3d1014', bg2:'#0f0304', p:'#54191d', acc:'#c0392b', eye:'#e74c3c', horn:true,  wp:'axe' },
+        c8:  { bg1:'#123b30', bg2:'#020e0b', p:'#1b4d3f', acc:'#1abc9c', eye:'#a3e4d7', golem:true, wp:'crystal' },
+        c9:  { bg1:'#2b103b', bg2:'#08020d', p:'#3a1550', acc:'#9b59b6', eye:'#f1c40f', reaper:true,wp:'scythe' },
+        c10: { bg1:'#3b220e', bg2:'#0d0602', p:'#522e11', acc:'#e67e22', eye:'#f39c12', beak:true,  wp:'talons' },
+        c11: { bg1:'#2e2e2e', bg2:'#080808', p:'#3d3d3d', acc:'#e67e22', eye:'#d35400', lava:true,  wp:'hammer' },
+        c12: { bg1:'#142233', bg2:'#04080e', p:'#1c2f45', acc:'#2980b9', eye:'#d4af37', mask:true,  wp:'katana' },
+        c13: { bg1:'#243442', bg2:'#060b0f', p:'#324759', acc:'#95a5a6', eye:'#bdc3c7', tower:true, wp:'spear' },
+        c14: { bg1:'#3b2811', bg2:'#0c0803', p:'#4d3618', acc:'#d35400', eye:'#f39c12', turban:true,wp:'scimitar' },
+        c15: { bg1:'#152b22', bg2:'#030b08', p:'#1c382e', acc:'#16a085', eye:'#2ecc71', snout:true, wp:'crossbow' },
+        c16: { bg1:'#2b1417', bg2:'#0a0304', p:'#381c1f', acc:'#e74c3c', eye:'#e74c3c', scope:true, wp:'arbalest' },
+        c17: { bg1:'#21212c', bg2:'#07070a', p:'#2d2d3a', acc:'#95a5a6', eye:'#bdc3c7', blank:true, wp:'estoc' },
+        c18: { bg1:'#2e1f10', bg2:'#0a0602', p:'#3d2c18', acc:'#8e44ad', eye:'#d4af37', ranger:true,wp:'bow' },
+        c19: { bg1:'#1c1c1c', bg2:'#050505', p:'#2b2b2b', acc:'#95a5a6', eye:'#7f8c8d', gate:true,  wp:'pillar' },
+        c20: { bg1:'#192110', bg2:'#050802', p:'#242e17', acc:'#27ae60', eye:'#2ecc71', beast:true, wp:'claws' },
+        // أكشنات
+        a1:  { bg1:'#2e0e11', bg2:'#0a0203', acc:'#e74c3c' },
+        a2:  { bg1:'#0c202e', bg2:'#03090f', acc:'#3498db' },
+        a3:  { bg1:'#2e1008', bg2:'#0a0301', acc:'#e67e22' },
+        a4:  { bg1:'#29170a', bg2:'#090401', acc:'#f39c12' },
+        a5:  { bg1:'#200c2e', bg2:'#06010a', acc:'#8e44ad' },
+        a6:  { bg1:'#26080b', bg2:'#080102', acc:'#c0392b' },
+        a7:  { bg1:'#0b2416', bg2:'#020904', acc:'#2ecc71' },
+        a8:  { bg1:'#262409', bg2:'#090801', acc:'#f1c40f' },
+        a9:  { bg1:'#1c0e29', bg2:'#07020b', acc:'#9b59b6' },
+        a10: { bg1:'#2b1f09', bg2:'#0a0701', acc:'#d4af37' },
+        a11: { bg1:'#2b2209', bg2:'#0a0701', acc:'#f39c12' },
+        a12: { bg1:'#0c242c', bg2:'#02090c', acc:'#00cec9' }
       };
 
-      // تحديد النمط البصري لكل بطاقة
-      let theme = 'iron';
-      if (['c2', 'c7', 'c11', 'a3', 'a4'].includes(cardId)) theme = 'fire';
-      else if (['c3', 'c9', 'c17', 'a5', 'a9'].includes(cardId)) theme = 'shadow';
-      else if (['c4', 'c12', 'a8', 'a12'].includes(cardId)) theme = 'storm';
-      else if (['c5', 'c10', 'a7', 'a10', 'a11'].includes(cardId)) theme = 'holy';
-      else if (['c6', 'a2'].includes(cardId)) theme = 'frost';
-      else if (['c8', 'c14', 'c15', 'c20'].includes(cardId)) theme = 'earth';
-      else if (['a1', 'a6', 'c16'].includes(cardId)) theme = 'blood';
+      const t = themes[id] || { bg1:'#1c1c24', bg2:'#08080c', acc:'#d4af37', p:'#2a2a38', eye:'#fff' };
 
-      const colors = bgGradients[theme] || bgGradients.iron;
-
-      // رسم السماء والضباب الفانتازي
-      const radGrad = ctx.createRadialGradient(w/2, h/2, 10, w/2, h/2, w*0.7);
-      radGrad.addColorStop(0, colors[0]);
-      radGrad.addColorStop(0.85, colors[1]);
-      radGrad.addColorStop(1, '#020204');
-      ctx.fillStyle = radGrad;
-      ctx.fillRect(0, 0, w, h);
-
-      // شرارات وجزيئات سحرية متطايرة في الخلفية
-      ctx.fillStyle = colors[2];
-      ctx.globalAlpha = 0.35;
-      for (let i = 0; i < 24; i++) {
-        const px = (Math.sin(i * 99 + cardId.charCodeAt(1)) * 0.5 + 0.5) * w;
-        const py = (Math.cos(i * 33 + cardId.charCodeAt(0)) * 0.5 + 0.5) * h;
-        const pr = (i % 3) + 1;
-        ctx.beginPath();
-        ctx.arc(px, py, pr, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1.0;
-
-      // ٢. رسم الشخصيات (جسد كامل مدرع بخوذة وسلاح وهالة)
-      if (cardId.startsWith('c')) {
-        drawFantasyWarrior(ctx, w, h, cardId, colors[2]);
-      } else {
-        // ٣. رسم بطاقات الأكشن (أسلحة ورموز سحرية أسطورية)
-        drawFantasyActionRelic(ctx, w, h, cardId, colors[2]);
-      }
-    }
-
-    // محرك رسم المحارب الفانتازي كامل الجسد
-    function drawFantasyWarrior(ctx, w, h, id, glowColor) {
-      const cx = w / 2;
-
-      // هالة إضاءة خلف المحارب
-      ctx.save();
-      ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 20;
-
-      // رداء المحارب المتطاير في الظلام
-      ctx.fillStyle = '#0a0a10';
-      ctx.beginPath();
-      ctx.moveTo(cx - 38, 55);
-      ctx.lineTo(cx - 52, 160);
-      ctx.lineTo(cx + 52, 160);
-      ctx.lineTo(cx + 38, 55);
-      ctx.closePath();
-      ctx.fill();
-
-      // الأقدام والسيقان المدرعة (Greaves)
-      ctx.fillStyle = '#1c1c24';
-      ctx.fillRect(cx - 24, 130, 18, 45);
-      ctx.fillRect(cx + 6, 130, 18, 45);
-      ctx.fillStyle = '#2d2d3a';
-      ctx.fillRect(cx - 28, 165, 24, 12);
-      ctx.fillRect(cx + 4, 165, 24, 12);
-
-      // درع الصدر والبطن (Cuirass Plate)
-      ctx.fillStyle = '#252533';
-      ctx.beginPath();
-      ctx.moveTo(cx - 28, 55);
-      ctx.lineTo(cx + 28, 55);
-      ctx.lineTo(cx + 20, 130);
-      ctx.lineTo(cx - 20, 130);
-      ctx.closePath();
-      ctx.fill();
-
-      // زركشة وزخارف معدنية بالصدر
-      ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, 60); ctx.lineTo(cx, 120);
-      ctx.moveTo(cx - 18, 80); ctx.lineTo(cx + 18, 80);
-      ctx.stroke();
-
-      // دروع الأكتاف الضخمة (Pauldrons)
-      ctx.fillStyle = '#3a3a4c';
-      ctx.beginPath();
-      ctx.arc(cx - 34, 60, 18, 0, Math.PI * 2);
-      ctx.arc(cx + 34, 60, 18, 0, Math.PI * 2);
-      ctx.fill();
-
-      // الأسلحة الخاصة لكل شخصية
-      ctx.fillStyle = '#e0e0e0';
-      ctx.strokeStyle = glowColor;
-      ctx.lineWidth = 3;
-
-      if (['c1', 'c5', 'c17'].includes(id)) {
-        // سيف عريض مضيء
-        ctx.beginPath();
-        ctx.moveTo(cx + 46, 25);
-        ctx.lineTo(cx + 42, 140);
-        ctx.lineTo(cx + 50, 140);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      } else if (['c7', 'c11'].includes(id)) {
-        // فأس حرب عملاق
-        ctx.beginPath();
-        ctx.moveTo(cx + 46, 20); ctx.lineTo(cx + 46, 150);
-        ctx.stroke();
-        ctx.fillStyle = '#7a1818';
-        ctx.fillRect(cx + 34, 25, 26, 35);
-      } else if (['c6', 'c9'].includes(id)) {
-        // عصا ومنجل سحري
-        ctx.beginPath();
-        ctx.moveTo(cx + 46, 15); ctx.lineTo(cx + 46, 160);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(cx + 46, 15, 10, 0, Math.PI * 2);
-        ctx.fillStyle = glowColor;
-        ctx.fill();
-      } else if (['c13', 'c19'].includes(id)) {
-        // درع حائطي ضخم
-        ctx.fillStyle = '#1c242e';
-        ctx.fillRect(cx - 55, 60, 30, 100);
-        ctx.strokeRect(cx - 55, 60, 30, 100);
-      }
-
-      // الخوذة الحربية الفانتازية المغلقة بالكامل (بدون وجه ولا ملامح)
-      ctx.fillStyle = '#181822';
-      ctx.beginPath();
-      ctx.arc(cx, 32, 18, 0, Math.PI * 2);
-      ctx.fill();
-
-      // فتحة الرؤية المتوهجة بالخوذة (عين ليزرية مظلمة فقط)
-      ctx.fillStyle = glowColor;
-      ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 12;
-
-      if (['c7', 'c1', 'c2'].includes(id)) {
-        // قرون حربية
-        ctx.strokeStyle = '#8a2020';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.moveTo(cx - 14, 25); ctx.lineTo(cx - 28, 8);
-        ctx.moveTo(cx + 14, 25); ctx.lineTo(cx + 28, 8);
-        ctx.stroke();
-      }
-
-      // فتحة القناع المضيئة
-      ctx.fillRect(cx - 10, 29, 20, 3.5);
-
-      ctx.restore();
-    }
-
-    // محرك رسم بطاقات الأكشن (أسلحة ورموز سحرية ثلاثية الأبعاد)
-    function drawFantasyActionRelic(ctx, w, h, id, glowColor) {
-      const cx = w / 2;
-      const cy = h / 2;
-
-      ctx.save();
-      ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 22;
-
-      // دائرة الرون السحرية في الخلفية
-      ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 55, 0, Math.PI * 2);
-      ctx.stroke();
-
-      if (id === 'a1') {
-        // شفرات رفض ملتهبة تلغي السحر
-        ctx.strokeStyle = '#e74c3c';
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(cx - 35, cy - 35); ctx.lineTo(cx + 35, cy + 35);
-        ctx.moveTo(cx + 35, cy - 35); ctx.lineTo(cx - 35, cy + 35);
-        ctx.stroke();
-      } else if (['a2', 'a12'].includes(id)) {
-        // درع أسطوري ثلاثي الأبعاد
-        ctx.fillStyle = '#0f2738';
-        ctx.strokeStyle = '#3498db';
-        ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - 40); ctx.lineTo(cx + 38, cy - 20);
-        ctx.lineTo(cx + 28, cy + 35); ctx.lineTo(cx, cy + 50);
-        ctx.lineTo(cx - 28, cy + 35); ctx.lineTo(cx - 38, cy - 20);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-      } else if (['a3', 'a4'].includes(id)) {
-        // سيف أو مطرقة حارقة تخترق الصفائح
-        ctx.fillStyle = '#e67e22';
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - 50); ctx.lineTo(cx + 12, cy + 20);
-        ctx.lineTo(cx - 12, cy + 20); ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = '#d4af37';
-        ctx.fillRect(cx - 22, cy + 20, 44, 7);
-        ctx.fillRect(cx - 5, cy + 27, 10, 25);
-      } else if (id === 'a5') {
-        // دوامة سرقة الطاقة الفراغية
-        ctx.strokeStyle = '#9b59b6';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 32, 0, Math.PI * 1.5);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(cx, cy, 18, Math.PI, Math.PI * 2.5);
-        ctx.stroke();
-        ctx.fillStyle = '#f1c40f';
-        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
-      } else if (id === 'a6') {
-        // قفل وسلاسل منع الدفاع
-        ctx.fillStyle = '#c0392b';
-        ctx.fillRect(cx - 24, cy - 10, 48, 42);
-        ctx.strokeStyle = '#e74c3c';
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.arc(cx, cy - 10, 18, Math.PI, 0);
-        ctx.stroke();
-      } else if (['a7', 'a8'].includes(id)) {
-        // شمس استعادة الطاقة أو حلقة عكس الاتجاه
-        ctx.fillStyle = '#2ecc71';
-        ctx.beginPath();
-        for (let i = 0; i < 8; i++) {
-          const a = (i * Math.PI) / 4;
-          const r = (i % 2 === 0) ? 42 : 24;
-          ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      // إذا كانت بطاقة شخصية: محارب فانتازي ملحمي كامل الجسد
+      if (id.startsWith('c')) {
+        let weaponSvg = '';
+        if (t.wp === 'sword' || t.wp === 'blade') {
+          weaponSvg = `<line x1="84" y1="18" x2="84" y2="108" stroke="${t.acc}" stroke-width="4"/><polygon points="84,14 80,24 88,24" fill="${t.acc}"/>`;
+        } else if (t.wp === 'axe') {
+          weaponSvg = `<line x1="16" y1="20" x2="16" y2="114" stroke="#7f8c8d" stroke-width="4"/><polygon points="6,24 26,24 26,48 6,48" fill="${t.acc}" stroke="#fff" stroke-width="1"/>`;
+        } else if (t.wp === 'staff' || t.wp === 'spear') {
+          weaponSvg = `<line x1="86" y1="14" x2="86" y2="118" stroke="${t.acc}" stroke-width="3"/><circle cx="86" cy="14" r="6" fill="${t.eye}"/>`;
+        } else if (t.wp === 'scythe') {
+          weaponSvg = `<line x1="88" y1="12" x2="88" y2="120" stroke="#7f8c8d" stroke-width="3.5"/><path d="M88 12 Q64 4 58 26" stroke="${t.acc}" stroke-width="4" fill="none"/>`;
+        } else if (t.wp === 'daggers') {
+          weaponSvg = `<line x1="18" y1="56" x2="8" y2="92" stroke="#bdc3c7" stroke-width="3"/><line x1="82" y1="56" x2="92" y2="92" stroke="#bdc3c7" stroke-width="3"/>`;
+        } else if (t.wp === 'bow') {
+          weaponSvg = `<path d="M16 32 Q6 64 16 96" stroke="${t.acc}" stroke-width="3" fill="none"/><line x1="16" y1="64" x2="42" y2="64" stroke="#bdc3c7" stroke-width="2.5"/>`;
+        } else {
+          weaponSvg = `<line x1="84" y1="24" x2="84" y2="112" stroke="${t.acc}" stroke-width="3"/>`;
         }
-        ctx.closePath(); ctx.fill();
-      } else if (['a9', 'a11'].includes(id)) {
-        // ساعة رملية أسطورية للدور المضاعف والتخطي
-        ctx.fillStyle = '#f39c12';
-        ctx.strokeStyle = '#d4af37';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(cx - 24, cy - 40); ctx.lineTo(cx + 24, cy - 40);
-        ctx.lineTo(cx - 24, cy + 40); ctx.lineTo(cx + 24, cy + 40);
-        ctx.closePath(); ctx.fill(); ctx.stroke();
-      } else {
-        // كروت تبادل البطاقات
-        ctx.fillStyle = '#d4af37';
-        ctx.fillRect(cx - 30, cy - 25, 28, 42);
-        ctx.fillStyle = '#fae48c';
-        ctx.fillRect(cx + 2, cy - 18, 28, 42);
+
+        let helmExtra = '';
+        if (t.horn) helmExtra = `<path d="M22 10 Q32 18 38 20 M78 10 Q68 18 62 20" stroke="${t.acc}" stroke-width="4" fill="none"/>`;
+        if (t.crown) helmExtra = `<polygon points="40,8 50,0 60,8 62,20 38,20" fill="${t.acc}"/>`;
+        if (t.wings) helmExtra = `<polygon points="28,8 38,18 30,22" fill="${t.acc}"/><polygon points="72,8 62,18 70,22" fill="${t.acc}"/>`;
+
+        let shieldSvg = t.shield || t.tower ? `<rect x="18" y="38" width="18" height="58" rx="4" fill="#151b24" stroke="${t.acc}" stroke-width="2"/>` : '';
+        let wingSvg = t.wing ? `<path d="M10 32 Q26 18 42 40 Q16 60 10 32 Z" fill="#872313"/><path d="M90 32 Q74 18 58 40 Q84 60 90 32 Z" fill="#872313"/>` : '';
+
+        return `<svg viewBox="0 0 100 130">
+          <defs><radialGradient id="bg_${id}" cx="50%" cy="40%" r="65%"><stop offset="0%" stop-color="${t.bg1}"/><stop offset="100%" stop-color="${t.bg2}"/></radialGradient></defs>
+          <rect width="100" height="130" fill="url(#bg_${id})"/>
+          ${wingSvg}
+          <path d="M26 40 L74 40 L82 108 L18 108 Z" fill="#08080d"/>
+          ${weaponSvg} ${shieldSvg}
+          <path d="M30 42 L70 42 L64 88 L36 88 Z" fill="${t.p}" stroke="${t.acc}" stroke-width="1.5"/>
+          <polygon points="50,50 56,64 50,78 44,64" fill="${t.acc}"/>
+          <circle cx="30" cy="46" r="10" fill="${t.p}" stroke="${t.acc}"/>
+          <circle cx="70" cy="46" r="10" fill="${t.p}" stroke="${t.acc}"/>
+          <rect x="34" y="88" width="12" height="28" fill="#111" stroke="${t.acc}" stroke-width="1"/>
+          <rect x="54" y="88" width="12" height="28" fill="#111" stroke="${t.acc}" stroke-width="1"/>
+          ${helmExtra}
+          <path d="M38 16 L62 16 L58 40 L42 40 Z" fill="#121218" stroke="${t.acc}" stroke-width="1.5"/>
+          <rect x="44" y="27" width="12" height="3" rx="1.5" fill="${t.eye}" filter="drop-shadow(0 0 4px ${t.eye})"/>
+        </svg>`;
       }
 
-      ctx.restore();
-    }
+      // بطاقات الأكشن: آثار ورموز ملحمية
+      let relic = '';
+      if (id === 'a1') relic = `<line x1="28" y1="43" x2="72" y2="87" stroke="${t.acc}" stroke-width="6"/><line x1="72" y1="43" x2="28" y2="87" stroke="${t.acc}" stroke-width="6"/>`;
+      else if (id === 'a2' || id === 'a12') relic = `<polygon points="50,26 80,40 72,88 50,106 28,88 20,40" fill="#102b3d" stroke="${t.acc}" stroke-width="3.5"/><circle cx="50" cy="66" r="10" fill="${t.acc}"/>`;
+      else if (id === 'a3' || id === 'a4') relic = `<polygon points="50,10 62,32 38,32" fill="${t.acc}"/><rect x="45" y="32" width="10" height="54" fill="#fff"/><rect x="30" y="86" width="40" height="7" rx="3" fill="${t.acc}"/><rect x="46" y="93" width="8" height="20" fill="#777"/>`;
+      else if (id === 'a5') relic = `<circle cx="50" cy="65" r="30" fill="none" stroke="${t.acc}" stroke-width="4" stroke-dasharray="8 4"/><circle cx="50" cy="65" r="10" fill="${t.acc}"/>`;
+      else if (id === 'a6') relic = `<rect x="30" y="48" width="40" height="38" rx="6" fill="#7a141a" stroke="${t.acc}" stroke-width="4"/><path d="M40 48 L40 32 Q50 20 60 32 L60 48" fill="none" stroke="${t.acc}" stroke-width="4.5"/>`;
+      else if (id === 'a7') relic = `<polygon points="50,30 58,52 80,52 62,66 68,88 50,74 32,88 38,66 20,52 42,52" fill="${t.acc}"/>`;
+      else if (id === 'a8') relic = `<path d="M30 65 A20 20 0 1 1 50 85 L50 96 L66 80 L50 64 L50 75 A10 10 0 1 0 40 65 Z" fill="${t.acc}"/>`;
+      else if (id === 'a9') relic = `<rect x="34" y="40" width="12" height="50" rx="4" fill="${t.acc}"/><rect x="54" y="40" width="12" height="50" rx="4" fill="${t.acc}"/>`;
+      else if (id === 'a10') relic = `<rect x="24" y="46" width="26" height="38" rx="4" fill="#a86016" stroke="${t.acc}" stroke-width="2"/><rect x="50" y="38" width="26" height="38" rx="4" fill="${t.acc}" stroke="#fff" stroke-width="2"/>`;
+      else if (id === 'a11') relic = `<circle cx="38" cy="65" r="16" fill="none" stroke="${t.acc}" stroke-width="5"/><circle cx="62" cy="65" r="16" fill="none" stroke="${t.acc}" stroke-width="5"/>`;
 
-    // استدعاء رسم جميع الكروت الموجودة في الصفحة
-    function renderAllCardCanvases() {
-      document.querySelectorAll('canvas[data-card]').forEach(cvs => {
-        const cId = cvs.getAttribute('data-card');
-        drawCardArt(cvs, cId);
-      });
+      return `<svg viewBox="0 0 100 130">
+        <defs><radialGradient id="bg_${id}" cx="50%" cy="50%" r="65%"><stop offset="0%" stop-color="${t.bg1}"/><stop offset="100%" stop-color="${t.bg2}"/></radialGradient></defs>
+        <rect width="100" height="130" fill="url(#bg_${id})"/>
+        <circle cx="50" cy="65" r="42" fill="none" stroke="${t.acc}" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4"/>
+        ${relic}
+      </svg>`;
     }
 
     const CHARACTERS = [
@@ -750,7 +574,7 @@
           el.className = 'card';
           el.innerHTML = `
             <div class="card-name">${c.name}</div>
-            <div class="card-art-frame"><canvas class="card-art-canvas" width="240" height="190" data-card="${c.id}"></canvas></div>
+            <div class="card-art-frame">${getCardArtSVG(c.id)}</div>
             ${c.atk ? `<div class="stats"><span class="stat-atk">⚔️ ${toAr(c.atk)}</span><span class="stat-def">🛡️ ${toAr(c.def)}</span></div>` : ''}
             <div class="desc">${c.desc}</div>
             <div class="tier">${c.tier}</div>
@@ -758,7 +582,6 @@
           box.appendChild(el);
         });
         document.getElementById('modal-gallery').classList.add('active');
-        renderAllCardCanvases();
       },
 
       showLocalSetup() {
@@ -1009,7 +832,6 @@
 
         document.getElementById('btn-end-turn').disabled = !isMyTurn || !!this.pendingAttack;
 
-        // قائمة اللاعبين
         const pList = document.getElementById('players-list');
         pList.innerHTML = '';
         s.players.forEach(p => {
@@ -1042,7 +864,6 @@
           pList.appendChild(el);
         });
 
-        // اليد المعروضة
         let activeHandPlayerId = curPlayer.id;
         if (this.mode === 'local' && this.pendingAttack) {
           activeHandPlayerId = this.pendingAttack.targetId;
@@ -1084,7 +905,7 @@
 
           el.innerHTML = `
             <div class="card-name">${card.name}</div>
-            <div class="card-art-frame"><canvas class="card-art-canvas" width="240" height="190" data-card="${card.id}"></canvas></div>
+            <div class="card-art-frame">${getCardArtSVG(card.id)}</div>
             ${card.isChar ? `<div class="stats"><span class="stat-atk">⚔️ ${toAr(card.atk)}</span><span class="stat-def">🛡️ ${toAr(card.def)}</span></div>` : ''}
             <div class="desc">${card.desc}</div>
             <div class="tier">${card.tier}</div>
@@ -1114,9 +935,6 @@
           document.getElementById('win-name').textContent = `فاز ${alive[0].name}!`;
           document.getElementById('modal-win').classList.add('active');
         }
-
-        // رسم كافة اللوحات الفنية على الكانفاس
-        renderAllCardCanvases();
       },
 
       renderActions(curPlayer, isMyTurn, hand, selChar, selActs) {
