@@ -11,22 +11,16 @@
 
   <style>
     :root {
-      --bg: #050508;
-      --panel: #0d0d14;
+      --bg: #050508; --panel: #0d0d14;
       --card-bg: linear-gradient(165deg, #181824 0%, #0c0c14 55%, #07070a 100%);
-      --border: #3d341e;
-      --gold: #d4af37;
-      --gold-light: #fbe089;
-      --red: #c0292b;
-      --blue: #2980b9;
-      --text: #f4f4f8;
-      --muted: #9595a6;
+      --border: #3d341e; --gold: #d4af37; --gold-light: #fbe089;
+      --red: #c0292b; --blue: #2980b9; --text: #f4f4f8; --muted: #9595a6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; font-family: 'Cairo', 'Tajawal', sans-serif; }
     body {
       background-color: var(--bg);
-      background-image: radial-gradient(circle at 50% 15%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
-                        radial-gradient(circle at 85% 85%, rgba(192, 41, 43, 0.05) 0%, transparent 50%),
+      background-image: radial-gradient(circle at 50% 15%, rgba(212,175,55,0.08) 0%, transparent 60%),
+                        radial-gradient(circle at 85% 85%, rgba(192,41,43,0.05) 0%, transparent 50%),
                         linear-gradient(180deg, #050508 0%, #0e0e16 100%);
       color: var(--text); direction: rtl; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column;
     }
@@ -36,9 +30,9 @@
       background: linear-gradient(135deg, #322511 0%, #171108 100%);
       color: var(--gold-light); padding: 9px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 0 8px rgba(212, 175, 55, 0.2);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 0 8px rgba(212,175,55,0.2);
     }
-    .btn:hover { background: linear-gradient(135deg, #4d3916 0%, #241a0b 100%); transform: translateY(-2px); border-color: #fff; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+    .btn:hover { background: linear-gradient(135deg, #4d3916 0%, #241a0b 100%); transform: translateY(-2px); border-color: #fff; }
     .btn-sec { border-color: #404052; background: #181822; color: #cfcfe0; box-shadow: none; }
     .btn-sec:hover { border-color: #63637a; background: #222230; }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
@@ -57,7 +51,7 @@
       font-size: 3.4rem; font-weight: 900;
       background: linear-gradient(180deg, #fff7d6 0%, #d4af37 55%, #6e5411 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2px;
-      filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.35));
+      filter: drop-shadow(0 0 25px rgba(212,175,55,0.35));
     }
     .box {
       background: var(--panel); border: 1.5px solid var(--border); padding: 22px;
@@ -88,7 +82,7 @@
     .p-card.dead { opacity: 0.35; pointer-events: none; }
     .bar { background: #050508; height: 16px; border-radius: 4px; position: relative; overflow: hidden; margin: 5px 0; border: 1px solid #222230; }
     .fill { background: linear-gradient(90deg, #87620d, #d4af37, #fdf0aa); height: 100%; transition: width 0.3s; }
-    .bar-txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #000; text-shadow: 0 0 2px rgba(255,255,255,0.7); }
+    .bar-txt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #000; }
 
     .arena-grid { display: grid; grid-template-columns: 1fr 290px; gap: 10px; min-height: 185px; }
     @media (max-width: 800px) { .arena-grid { grid-template-columns: 1fr; } }
@@ -120,14 +114,10 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.7), inset 0 0 15px rgba(212,175,55,0.05);
       position: relative;
     }
-    .card::before {
-      content: ''; position: absolute; inset: 2px; border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 8px; pointer-events: none;
-    }
-    .card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 8px 25px rgba(212,175,55,0.25); }
+    .card:hover { transform: translateY(-5px); border-color: var(--gold); }
     .card.sel-char { border-color: #ff5252; background: linear-gradient(165deg, #2e1014 0%, #150709 100%); transform: translateY(-7px); box-shadow: 0 0 16px rgba(255,82,82,0.5); }
     .card.sel-act { border-color: #40a9ff; background: linear-gradient(165deg, #102438 0%, #08111c 100%); transform: translateY(-7px); box-shadow: 0 0 16px rgba(64,169,255,0.5); }
-    .card-name { font-weight: 800; font-size: 0.86rem; color: #fff; text-shadow: 0 1px 3px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .card-name { font-weight: 800; font-size: 0.86rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
     
     .card-art-frame {
       width: 100%; height: 135px; background: #06060c;
@@ -135,17 +125,15 @@
       margin: 2px 0; overflow: hidden; position: relative;
     }
     .card-art-frame img {
-      width: 100%; height: 100%; object-fit: cover; object-position: center;
-      display: block; transition: 0.3s;
+      width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
     }
-    .card:hover .card-art-frame img { transform: scale(1.05); filter: contrast(1.1); }
 
     .stats {
       display: flex; justify-content: space-around; background: #09090f;
       padding: 3px 0; border-radius: 5px; font-weight: 900; font-size: 0.76rem; border: 1px solid #20202c;
     }
-    .stat-atk { color: #ff6b6b; display: flex; align-items: center; gap: 3px; }
-    .stat-def { color: #5dade2; display: flex; align-items: center; gap: 3px; }
+    .stat-atk { color: #ff6b6b; }
+    .stat-def { color: #5dade2; }
     .desc { font-size: 0.68rem; color: var(--muted); min-height: 38px; line-height: 1.35; text-align: center; }
     .tier { font-size: 0.65rem; color: var(--gold); text-align: center; border-top: 1px solid #222230; padding-top: 2px; }
 
@@ -378,9 +366,12 @@
       return n.toString().replace(/[0-9]/g, d => ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'][d]);
     }
 
-    // المعالج الذكي لاكتشاف امتدادات الصور المختلفة ومنع علامات الاستفهام
+    // المعالج الذكي الشامل: يبدأ مباشرة بالصيغ المدبلة ثم باقي الصيغ
     function handleImgError(img, cardId) {
-      const exts = ['PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'webp'];
+      const exts = [
+        'png.jpg', 'jpg.png', 'jpeg.jpg', 'png.jpeg', 'jpg.JPG',
+        'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'webp'
+      ];
       let idx = img.dataset.step ? parseInt(img.dataset.step) : 0;
       if (idx < exts.length) {
         img.dataset.step = idx + 1;
@@ -392,7 +383,7 @@
     }
 
     function getCardImageHTML(cardId, cardName) {
-      return `<img src="images/${cardId}.png" alt="${cardName}" onerror="handleImgError(this, '${cardId}')">
+      return `<img src="images/${cardId}.png.JPG" alt="${cardName}" onerror="handleImgError(this, '${cardId}')">
         <div style="display:none; width:100%; height:100%; align-items:center; justify-content:center; background:#101018; color:#d4af37; font-weight:800; font-size:0.8rem; text-align:center; padding:8px; border:1px dashed #3a3a4e; border-radius:5px;">
           ⚔️ ${cardName}
         </div>`;
@@ -742,6 +733,7 @@
 
         document.getElementById('btn-end-turn').disabled = !isMyTurn || !!this.pendingAttack;
 
+        // قائمة اللاعبين
         const pList = document.getElementById('players-list');
         pList.innerHTML = '';
         s.players.forEach(p => {
@@ -774,6 +766,7 @@
           pList.appendChild(el);
         });
 
+        // اليد المعروضة
         let activeHandPlayerId = curPlayer.id;
         if (this.mode === 'local' && this.pendingAttack) {
           activeHandPlayerId = this.pendingAttack.targetId;
